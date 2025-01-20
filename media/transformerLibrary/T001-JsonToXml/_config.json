@@ -1,0 +1,19 @@
+{
+    "id": "T001", 
+    "name": "JsonToXml",
+    "description": "Converts JSON to XML",    
+    "prompt": "Convert the following JSON content into well-formatted XML. Preserve all data structures and attributes. Ensure the XML is valid and properly nested. {{content::file}}",
+    "input": [
+        {
+            "name": "content",
+            "description": "Path to file or folder",
+            "type": "file",
+            "value": "",
+            "required": true
+        }
+    ],
+    "outputFolder": "/",
+    "outputFileName": "*_out.xml",
+    "temperature": 0.7,
+    "processFormat": "eachFile"
+}

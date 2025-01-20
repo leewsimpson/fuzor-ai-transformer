@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"module": "Node16",
+		"target": "ES2022",
+		"outDir": "out",
+		"lib": ["ES2022"],
+		"sourceMap": true,
+		"rootDir": "src",
+		"strict": true, /* enable all strict type-checking options */
+		"experimentalDecorators": true,
+		"forceConsistentCasingInFileNames": true,
+		"isolatedModules": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": false,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"useDefineForClassFields": true,
+		"useUnknownInCatchVariables": false
+	},
+	"exclude": ["node_modules", ".vscode-test", "webview-ui"]
+}

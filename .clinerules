@@ -1,0 +1,15 @@
+General:
+Review the solution architecture in design.md
+"compilerOptions": "module": "Node16", "target": "ES2022"...
+This is typescript, so only reference other ts files, no referencing .js
+do not execute 'npx tsc' directly - use 'npm run compile' if needed
+
+Testing:
+Do NOT use Jest!
+Stick to Chai and Mocha. 
+Follow the conventions of exsisting test files.
+Tests should focus on high level behavior. Keep tests simple.
+Vscode module needs to be properly mocked using the mock implementations from src/test/mocks/vscode.ts
+Each test file should have one 'suite' and multiple 'test' (instead of describe and it)
+use assert instead of expect
+You can use 'npm test' to check tests are working

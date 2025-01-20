@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Fuzor",
+  "scopeName": "source.fuzor",
+  "patterns": [
+    {
+      "name": "meta.template.fuzor",
+      "match": "\\{\\{(\\w+)(::(\\w+|))(\\|\\w+)*\\}\\}",
+      "captures": {
+        "0": {
+          "name": "string.template.fuzor"
+        },
+        "1": {
+          "name": "keyword.fuzor.key"
+        },
+        "3": {
+          "name": "keyword.fuzor.parameter"
+        }
+      }
+    }
+  ],
+  "repository": {},
+  "uuid": "3f1e1e1e-1e1e-1e1e-1e1e-1e1e1e1e1e1e"
+}
