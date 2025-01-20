@@ -2,7 +2,7 @@
   "name": "fuzor-ai-transformer",
   "displayName": "Fuzor AI Transformer",
   "description": "Tool for transforming files into different formats using AI",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "publisher": "Fuzor",
   "repository": {
     "type": "git",
