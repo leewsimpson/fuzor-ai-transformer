@@ -1,6 +1,3 @@
-import { AbstractBaseExecuter } from './baseExecuter';
+import { AbstractBaseExecuter } from "./baseExecuter"
 
-
-export class DefaultExecuter extends AbstractBaseExecuter {
-
-}
+export class DefaultExecuter extends AbstractBaseExecuter {}

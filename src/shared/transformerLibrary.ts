@@ -1,7 +1,7 @@
-import { TransformerConfig } from "./transformerConfig";
+import { TransformerConfig } from "./transformerConfig"
 
 // export interface TransformerLibrary {
 //     library: Array<TransformerConfig>;
 // }
 
-export type TransformerLibrary = TransformerConfig | { [key: string]: TransformerLibrary };
+export type TransformerLibrary = TransformerConfig | { [key: string]: TransformerLibrary }

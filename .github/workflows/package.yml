@@ -1,13 +1,13 @@
 name: Run Tests and Release
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
 
 permissions:
-  contents: write    
+    contents: write
 
 jobs:
     package-and-release:
@@ -15,87 +15,87 @@ jobs:
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         runs-on: ubuntu-latest
         steps:
-          - name: Checkout
-            uses: actions/checkout@v3
+            - name: Checkout
+              uses: actions/checkout@v3
 
-          - name: Get version
-            id: get_version
-            run: |
-              version=$(node -p "JSON.parse(require('fs').readFileSync('./package.json', 'utf8')).version")
-              echo "version=$version" >> $GITHUB_ENV
-              echo $version            
-    
-          - name: Setup Node.js
-            uses: actions/setup-node@v3
-            with:
-              node-version: 20.x
-              cache: 'npm'
-    
-          # Cache root dependencies - only reuse if package-lock.json exactly matches
-          - name: Cache root dependencies
-            uses: actions/cache@v4
-            id: root-cache
-            with:
-                path: node_modules
-                key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-    
-          # Cache webview-ui dependencies - only reuse if package-lock.json exactly matches
-          - name: Cache webview-ui dependencies
-            uses: actions/cache@v4
-            id: webview-cache
-            with:
-                path: webview-ui/node_modules
-                key: ${{ runner.os }}-npm-webview-${{ hashFiles('webview-ui/package-lock.json') }}            
-    
-          - name: Install root dependencies
-            if: steps.root-cache.outputs.cache-hit != 'true'
-            run: npm ci
-    
-          - name: Install webview-ui dependencies
-            if: steps.webview-cache.outputs.cache-hit != 'true'
-            run: cd webview-ui && npm ci
-    
-          - name: Build Webview
-            run: cd webview-ui && npm run build                    
-    
-          - name: Install vsce
-            run: npm install -g @vscode/vsce
-    
-          - name: Package extension
-            run: vsce package
-    
-          - name: Upload artifact
-            uses: actions/upload-artifact@v3
-            with:
-              name: extension
-              path: '**/*.vsix' # Match the file in any subdirectory
-    
-          - name: Delete existing release (if any)
-            run: |
-              gh release delete v${{ env.version }} -y || true
-              git tag -d v${{ env.version }} || true
-              git push origin :refs/tags/v${{ env.version }} || true
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
-          - name: Create Release
-            id: create_release
-            uses: actions/create-release@v1
-            with:
-              tag_name: v${{ env.version }}
-              release_name: Release v${{ env.version }}
-              draft: false
-              prerelease: false
-              body: |
-                ### What's Changed
-                - Automated release via GitHub Actions
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
-          - name: Release
-            uses: softprops/action-gh-release@v2
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            with:
-              tag_name: v${{ env.version }}
-              files: '**/*.vsix'
+            - name: Get version
+              id: get_version
+              run: |
+                  version=$(node -p "JSON.parse(require('fs').readFileSync('./package.json', 'utf8')).version")
+                  echo "version=$version" >> $GITHUB_ENV
+                  echo $version
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20.x
+                  cache: "npm"
+
+            # Cache root dependencies - only reuse if package-lock.json exactly matches
+            - name: Cache root dependencies
+              uses: actions/cache@v4
+              id: root-cache
+              with:
+                  path: node_modules
+                  key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+
+            # Cache webview-ui dependencies - only reuse if package-lock.json exactly matches
+            - name: Cache webview-ui dependencies
+              uses: actions/cache@v4
+              id: webview-cache
+              with:
+                  path: webview-ui/node_modules
+                  key: ${{ runner.os }}-npm-webview-${{ hashFiles('webview-ui/package-lock.json') }}
+
+            - name: Install root dependencies
+              if: steps.root-cache.outputs.cache-hit != 'true'
+              run: npm ci
+
+            - name: Install webview-ui dependencies
+              if: steps.webview-cache.outputs.cache-hit != 'true'
+              run: cd webview-ui && npm ci
+
+            - name: Build Webview
+              run: cd webview-ui && npm run build
+
+            - name: Install vsce
+              run: npm install -g @vscode/vsce
+
+            - name: Package extension
+              run: vsce package
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: extension
+                  path: "**/*.vsix" # Match the file in any subdirectory
+
+            - name: Delete existing release (if any)
+              run: |
+                  gh release delete v${{ env.version }} -y || true
+                  git tag -d v${{ env.version }} || true
+                  git push origin :refs/tags/v${{ env.version }} || true
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Create Release
+              id: create_release
+              uses: actions/create-release@v1
+              with:
+                  tag_name: v${{ env.version }}
+                  release_name: Release v${{ env.version }}
+                  draft: false
+                  prerelease: false
+                  body: |
+                      ### What's Changed
+                      - Automated release via GitHub Actions
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Release
+              uses: softprops/action-gh-release@v2
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: v${{ env.version }}
+                  files: "**/*.vsix"

@@ -1,41 +1,41 @@
 {
-    "id": "T003",
-    "name": "Create Test Cases",
-    "description": "Create Test Cases from Requirement",
-    "prompt": "You are a software quality engineer working in a {{industry::text}} company and you want to create test cases to test your application.\r\n    You will generate all potential test cases in csv file. The table should have the following\r\n    columns:\r\n        - Test Case ID (Must be an integer)\r\n        - Test Case Name: One sentence clearly describing the test (wrap with double quotes)\r\n        - Test Steps: Detailed steps to execute the test with expected result (wrap with double quotes), each step should be in new line\r\n        - Automation Candidate: Yes or No whether it is the right candidate for automation\r\n        - Type: whether that is functional, negative, performance, or something else\r\n    Only generate the response in csv, no comment or explanation. Do not wrap the response in any code block.\r\n    You will use below Sample as a sample test case.\r\n\r\n    {{sample::textArea}} \r\n\r\n    You will generate comprehensive test cases (only of type: ${{scope::text}} for the following requirement: \r\n\r\n    {{requirement::folder}}",
-    "input": [
-        {
-            "name": "industry",
-            "description": "Industry",
-            "type": "text",
-            "value": "/",
-            "required": true
-        },
-        {
-            "name": "sample",
-            "description": "Input for sample",
-            "required": true,
-            "type": "textArea",
-            "value": "/"
-        },
-        {
-            "name": "scope",
-            "description": "Scope",
-            "type": "text",
-            "value": "/",
-            "required": true
-        },
-        {
-            "name": "requirement",
-            "description": "Input for requirement",
-            "type": "folder",
-            "value": "/",
-            "required": true
-        }
-    ],
-    "outputFolder": "/",
-    "outputFileName": "*.csv",
-    "temperature": 0.7,
-    "maxTokens": 1000,
-    "processFormat": "eachFile"
+	"id": "T003",
+	"name": "Create Test Cases",
+	"description": "Create Test Cases from Requirement",
+	"prompt": "You are a software quality engineer working in a {{industry::text}} company and you want to create test cases to test your application.\r\n    You will generate all potential test cases in csv file. The table should have the following\r\n    columns:\r\n        - Test Case ID (Must be an integer)\r\n        - Test Case Name: One sentence clearly describing the test (wrap with double quotes)\r\n        - Test Steps: Detailed steps to execute the test with expected result (wrap with double quotes), each step should be in new line\r\n        - Automation Candidate: Yes or No whether it is the right candidate for automation\r\n        - Type: whether that is functional, negative, performance, or something else\r\n    Only generate the response in csv, no comment or explanation. Do not wrap the response in any code block.\r\n    You will use below Sample as a sample test case.\r\n\r\n    {{sample::textArea}} \r\n\r\n    You will generate comprehensive test cases (only of type: ${{scope::text}} for the following requirement: \r\n\r\n    {{requirement::folder}}",
+	"input": [
+		{
+			"name": "industry",
+			"description": "Industry",
+			"type": "text",
+			"value": "/",
+			"required": true
+		},
+		{
+			"name": "sample",
+			"description": "Input for sample",
+			"required": true,
+			"type": "textArea",
+			"value": "/"
+		},
+		{
+			"name": "scope",
+			"description": "Scope",
+			"type": "text",
+			"value": "/",
+			"required": true
+		},
+		{
+			"name": "requirement",
+			"description": "Input for requirement",
+			"type": "folder",
+			"value": "/",
+			"required": true
+		}
+	],
+	"outputFolder": "/",
+	"outputFileName": "*.csv",
+	"temperature": 0.7,
+	"maxTokens": 1000,
+	"processFormat": "eachFile"
 }

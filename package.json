@@ -1,349 +1,360 @@
 {
-  "name": "fuzor-ai-transformer",
-  "displayName": "Fuzor AI Transformer",
-  "description": "Tool for transforming files into different formats using AI",
-  "version": "0.0.7",
-  "publisher": "Fuzor",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Deloitte-Australia/fuzor-ai-transformer.git"
-  },
-  "engines": {
-    "vscode": "^1.96.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "main": "./dist/extension.js",
-  "contributes": {
-    "configuration": {
-      "title": "Fuzor AI Transformer",
-      "properties": {
-        "fuzorAiTransformer.acceptTerms": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "Accept the [terms and conditions](https://github.com/Deloitte-Australia/fuzor-ai-transformer/blob/main/TERMS_AND_CONDITIONS.md) of using this extension"
-        },
-        "fuzorAiTransformer.aiProvider": {
-          "type": "string",
-          "enum": [
-            "Anthropic",
-            "OpenAI",
-            "Azure OpenAI",
-            "Google Gemini",
-            "DeepSeek",
-            "Custom",
-            "OpenRouter"
-          ],
-          "default": "Azure OpenAI",
-          "description": "Select the AI Provider to use for transformations"
-        },
-        "fuzorAiTransformer.apiKey": {
-          "type": "string",
-          "description": "API key for the selected AI model",
-          "scope": "application",
-          "sensitive": true
-        },
-        "fuzorAiTransformer.modelName": {
-          "type": "string",
-          "description": "Name of the deployed model to use if applicable",
-          "scope": "application"
-        },
-        "fuzorAiTransformer.modelEndpoint": {
-          "type": "string",
-          "description": "Model Endpoint to use if applicable",
-          "scope": "application"
-        },
-        "fuzorAiTransformer.apiVersion": {
-          "type": "string",
-          "description": "API Version to use if applicable",
-          "scope": "application"
-        },
-        "fuzorAiTransformer.gitLibraryName": {
-          "type": "string",
-          "description": "Name of the Git library to use for transformers",
-          "scope": "application"
-        },
-        "fuzorAiTransformer.tokenLimit": {
-          "type": "number",
-          "default": 4000,
-          "description": "Maximum number of tokens allowed in AI requests",
-          "scope": "application"
-        }
-      }
-    },
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "fuzor-ai-transformer",
-          "title": "Fuzor AI Transformer",
-          "icon": "media/transformer.svg"
-        }
-      ]
-    },
-    "views": {
-      "fuzor-ai-transformer": [
-        {
-          "id": "treeTransformer",
-          "name": "Transformers"
-        },
-        {
-          "type": "webview",
-          "id": "viewEditTransformer",
-          "name": "View/Edit Transformer",
-          "icon": "media/transformer.svg"
-        }
-      ]
-    },
-    "commands": [
-      {
-        "command": "treeTransformer.selectItem",
-        "title": "Select Item"
-      },
-      {
-        "command": "fuzor-ai-transformer.showPanel",
-        "title": "Fuzor AI Transformer: Show Panel"
-      },
-      {
-        "command": "fuzor-ai-transformer.refresh",
-        "title": "Refresh",
-        "icon": "$(refresh)"
-      },
-      {
-        "command": "fuzor-ai-transformer.addTransformer",
-        "title": "Add Transformer",
-        "icon": "$(add)"
-      },
-      {
-        "command": "fuzor-ai-transformer.editTransformer",
-        "title": "Edit Transformer"
-      },
-      {
-        "command": "fuzor-ai-transformer.executeTransformer",
-        "title": "Execute Transformer",
-        "icon": "$(play)"
-      },
-      {
-        "command": "fuzor-ai-transformer.deleteTransformer",
-        "title": "Delete Transformer",
-        "icon": "$(trash)"
-      },      
-      {
-        "command": "fuzor-ai-transformer.deleteFolder",
-        "title": "Delete Folder (and contents)",
-        "icon": "$(trash)"
-      },
-      {
-        "command": "fuzor-ai-transformer.duplicateTransformer",
-        "title": "Duplicate Transformer",
-        "icon": "$(files)"
-      },
-      {
-        "command": "fuzor-ai-transformer.importTransformer",
-        "title": "Import Transformer",
-        "icon": "$(cloud-upload)"
-      },
-      {
-        "command": "fuzor-ai-transformer.exportTransformer",
-        "title": "Export Transformer",
-        "icon": "$(cloud-download)"
-      },
-      {
-        "command": "fuzor-ai-transformer.searchTransformers",
-        "title": "Search Transformers",
-        "icon": "$(search)"
-      },
-      {
-        "command": "fuzor-ai-transformer.openSettings",
-        "title": "Open Settings",
-        "icon": "$(gear)"
-      },
-      {
-        "command": "extension.openFileBrowser",
-        "title": "Open File Browser"
-      },
-      {
-        "command": "fuzor-ai-transformer.viewTransformerLibrary",
-        "title": "View Transformer Library",
-        "icon": "$(library)"
-      },
-      {
-        "command": "fuzor-ai-transformer.createFolder",
-        "title": "Create Folder",
-        "icon": "$(new-folder)"
-      },
-      {
-        "command": "fuzor-ai-transformer.renameFolder",
-        "title": "Rename Folder",
-        "icon": "$(edit)"
-      }
-    ],
-    "languages": [
-      {
-        "id": "fuzor",
-        "extensions": [
-          ".fuzor"
-        ],
-        "aliases": [
-          "Fuzor"
-        ]
-      },
-      {
-        "id": "fuzorprompt",
-        "extensions": [
-          ".fuzorprompt"
-        ],
-        "aliases": [
-          "Fuzor Prompt"
-        ]
-      }
-    ],
-    "grammars": [
-      {
-        "language": "fuzor",
-        "scopeName": "source.fuzor",
-        "path": "./syntaxes/fuzor.tmLanguage.json"
-      },
-      {
-        "language": "fuzorprompt",
-        "scopeName": "source.fuzorprompt",
-        "path": "./syntaxes/fuzorprompt.tmLanguage.json"
-      }
-    ],
-    "menus": {
-      "view/title": [
-        {
-          "command": "fuzor-ai-transformer.addTransformer",
-          "when": "view == treeTransformer",
-          "group": "navigation@1"
-        },
-        {
-          "command": "fuzor-ai-transformer.searchTransformers",
-          "when": "view == treeTransformer",
-          "group": "navigation@2"
-        },
-        {
-          "command": "fuzor-ai-transformer.viewTransformerLibrary",
-          "when": "view == treeTransformer",
-          "group": "navigation@2"
-        },
-        {
-          "command": "fuzor-ai-transformer.refresh",
-          "when": "view == treeTransformer",
-          "group": "navigation@3"
-        },
-        {
-          "command": "fuzor-ai-transformer.openSettings",
-          "when": "view == treeTransformer",
-          "group": "navigation@4"
-        },
-        {
-          "command": "fuzor-ai-transformer.importTransformer",
-          "when": "view == treeTransformer",
-          "group": "navigation@5"
-        },
-        {
-          "command": "fuzor-ai-transformer.createFolder",
-          "when": "view == treeTransformer",
-          "group": "navigation@6"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "fuzor-ai-transformer.executeTransformer",
-          "when": "view == treeTransformer && viewItem == transformer",
-          "group": "inline"
-        },
-        {
-          "command": "fuzor-ai-transformer.exportTransformer",
-          "when": "view == treeTransformer && viewItem == transformer",
-          "group": "inline"
-        },
-        {
-          "command": "fuzor-ai-transformer.editTransformer",
-          "when": "view == treeTransformer && viewItem == transformer",
-          "group": "1_modification@1"
-        },
-        {
-          "command": "fuzor-ai-transformer.deleteTransformer",
-          "when": "view == treeTransformer && viewItem == transformer",
-          "group": "1_modification@2"
-        },
-        {
-          "command": "fuzor-ai-transformer.duplicateTransformer",
-          "when": "view == treeTransformer && viewItem == transformer",
-          "group": "1_modification@3"
-        },
-        {
-          "command": "fuzor-ai-transformer.deleteFolder",
-          "when": "view == treeTransformer && viewItem == folder",
-          "group": "1_modification@5"
-        },        
-        {
-          "command": "fuzor-ai-transformer.deleteFolder",
-          "when": "view == treeTransformer && viewItem == folder",
-          "group": "inline"
-        },
-        {
-          "command": "fuzor-ai-transformer.renameFolder",
-          "when": "view == treeTransformer && viewItem == folder",
-          "group": "1_modification@6"
-        },        
-        {
-          "command": "fuzor-ai-transformer.renameFolder",
-          "when": "view == treeTransformer && viewItem == folder",
-          "group": "inline"
-        }
-      ]
-    }
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run package",
-    "compile": "webpack",
-    "watch": "run-p watch:webpack start:webview",
-    "watch:webpack": "webpack --watch",
-    "package": "webpack --mode production --devtool hidden-source-map",
-    "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "npm run compile-tests && npm run compile && npm run lint",
-    "lint": "eslint src",
-    "test": "vscode-test",
-    "start:webview": "cd webview-ui && npm run start",
-    "build:webview": "cd webview-ui && npm run build",
-    "test:webview": "cd webview-ui && npm run test",
-    "publish:marketplace": "vsce publish && ovsx publish"
-  },
-  "dependencies": {
-    "@azure/openai": "^2.0.0",
-    "@google/generative-ai": "^0.21.0",
-    "@vscode/codicons": "^0.0.36",
-    "axios": "^1.7.9",
-    "generator-code": "^1.11.5",
-    "openai": "^4.77.3",
-    "uuid": "^9.0.1",
-    "yo": "^5.1.0"
-  },
-  "devDependencies": {
-    "@types/chai": "^5.0.1",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "^20.17.13",
-    "@types/sinon": "^17.0.3",
-    "@types/vscode": "^1.96.0",
-    "@typescript-eslint/eslint-plugin": "^8.17.0",
-    "@typescript-eslint/parser": "^8.17.0",
-    "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1",
-    "chai": "^4.5.0",
-    "copy-webpack-plugin": "^12.0.2",
-    "cross-env": "^7.0.3",
-    "eslint": "^9.16.0",
-    "mocha": "^11.0.1",
-    "npm-run-all": "^4.1.5",
-    "sinon": "^19.0.2",
-    "ts-loader": "^9.5.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.3",
-    "webpack": "^5.95.0",
-    "webpack-cli": "^5.1.4"
-  }
+	"name": "fuzor-ai-transformer",
+	"displayName": "Fuzor AI Transformer",
+	"description": "Tool for transforming files into different formats using AI",
+	"version": "0.0.8",
+	"publisher": "Fuzor",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Deloitte-Australia/fuzor-ai-transformer.git"
+	},
+	"engines": {
+		"vscode": "^1.96.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"author": {
+		"name": "Fuzor Bot"
+	},
+	"main": "./dist/extension.js",
+	"contributes": {
+		"configuration": {
+			"title": "Fuzor AI Transformer",
+			"properties": {
+				"fuzorAiTransformer.acceptTerms": {
+					"type": "boolean",
+					"default": false,
+					"markdownDescription": "Accept the [terms and conditions](https://github.com/Deloitte-Australia/fuzor-ai-transformer/blob/main/TERMS_AND_CONDITIONS.md) of using this extension"
+				},
+				"fuzorAiTransformer.aiProvider": {
+					"type": "string",
+					"enum": [
+						"Anthropic",
+						"OpenAI",
+						"Azure OpenAI",
+						"Google Gemini",
+						"DeepSeek",
+						"Custom",
+						"OpenRouter"
+					],
+					"default": "Azure OpenAI",
+					"description": "Select the AI Provider to use for transformations"
+				},
+				"fuzorAiTransformer.apiKey": {
+					"type": "string",
+					"description": "API key for the selected AI model",
+					"scope": "application",
+					"sensitive": true
+				},
+				"fuzorAiTransformer.modelName": {
+					"type": "string",
+					"description": "Name of the deployed model to use if applicable",
+					"scope": "application"
+				},
+				"fuzorAiTransformer.modelEndpoint": {
+					"type": "string",
+					"description": "Model Endpoint to use if applicable",
+					"scope": "application"
+				},
+				"fuzorAiTransformer.apiVersion": {
+					"type": "string",
+					"description": "API Version to use if applicable",
+					"scope": "application"
+				},
+				"fuzorAiTransformer.gitLibraryName": {
+					"type": "string",
+					"description": "Name of the Git library to use for transformers",
+					"scope": "application"
+				},
+				"fuzorAiTransformer.tokenLimit": {
+					"type": "number",
+					"default": 4000,
+					"description": "Maximum number of tokens allowed in AI requests",
+					"scope": "application"
+				}
+			}
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "fuzor-ai-transformer",
+					"title": "Fuzor AI Transformer",
+					"icon": "media/transformer.svg"
+				}
+			]
+		},
+		"views": {
+			"fuzor-ai-transformer": [
+				{
+					"id": "treeTransformer",
+					"name": "Transformers"
+				},
+				{
+					"type": "webview",
+					"id": "viewEditTransformer",
+					"name": "View/Edit Transformer",
+					"icon": "media/transformer.svg"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "treeTransformer.selectItem",
+				"title": "Select Item"
+			},
+			{
+				"command": "fuzor-ai-transformer.showPanel",
+				"title": "Fuzor AI Transformer: Show Panel"
+			},
+			{
+				"command": "fuzor-ai-transformer.refresh",
+				"title": "Refresh",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "fuzor-ai-transformer.addTransformer",
+				"title": "Add Transformer",
+				"icon": "$(add)"
+			},
+			{
+				"command": "fuzor-ai-transformer.editTransformer",
+				"title": "Edit Transformer"
+			},
+			{
+				"command": "fuzor-ai-transformer.executeTransformer",
+				"title": "Execute Transformer",
+				"icon": "$(play)"
+			},
+			{
+				"command": "fuzor-ai-transformer.deleteTransformer",
+				"title": "Delete Transformer",
+				"icon": "$(trash)"
+			},
+			{
+				"command": "fuzor-ai-transformer.deleteFolder",
+				"title": "Delete Folder (and contents)",
+				"icon": "$(trash)"
+			},
+			{
+				"command": "fuzor-ai-transformer.duplicateTransformer",
+				"title": "Duplicate Transformer",
+				"icon": "$(files)"
+			},
+			{
+				"command": "fuzor-ai-transformer.importTransformer",
+				"title": "Import Transformer",
+				"icon": "$(cloud-upload)"
+			},
+			{
+				"command": "fuzor-ai-transformer.exportTransformer",
+				"title": "Export Transformer",
+				"icon": "$(cloud-download)"
+			},
+			{
+				"command": "fuzor-ai-transformer.searchTransformers",
+				"title": "Search Transformers",
+				"icon": "$(search)"
+			},
+			{
+				"command": "fuzor-ai-transformer.openSettings",
+				"title": "Open Settings",
+				"icon": "$(gear)"
+			},
+			{
+				"command": "extension.openFileBrowser",
+				"title": "Open File Browser"
+			},
+			{
+				"command": "fuzor-ai-transformer.viewTransformerLibrary",
+				"title": "View Transformer Library",
+				"icon": "$(library)"
+			},
+			{
+				"command": "fuzor-ai-transformer.createFolder",
+				"title": "Create Folder",
+				"icon": "$(new-folder)"
+			},
+			{
+				"command": "fuzor-ai-transformer.renameFolder",
+				"title": "Rename Folder",
+				"icon": "$(edit)"
+			}
+		],
+		"languages": [
+			{
+				"id": "fuzor",
+				"extensions": [
+					".fuzor"
+				],
+				"aliases": [
+					"Fuzor"
+				]
+			},
+			{
+				"id": "fuzorprompt",
+				"extensions": [
+					".fuzorprompt"
+				],
+				"aliases": [
+					"Fuzor Prompt"
+				]
+			}
+		],
+		"grammars": [
+			{
+				"language": "fuzor",
+				"scopeName": "source.fuzor",
+				"path": "./syntaxes/fuzor.tmLanguage.json"
+			},
+			{
+				"language": "fuzorprompt",
+				"scopeName": "source.fuzorprompt",
+				"path": "./syntaxes/fuzorprompt.tmLanguage.json"
+			}
+		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "fuzor-ai-transformer.addTransformer",
+					"when": "view == treeTransformer",
+					"group": "navigation@1"
+				},
+				{
+					"command": "fuzor-ai-transformer.searchTransformers",
+					"when": "view == treeTransformer",
+					"group": "navigation@2"
+				},
+				{
+					"command": "fuzor-ai-transformer.viewTransformerLibrary",
+					"when": "view == treeTransformer",
+					"group": "navigation@2"
+				},
+				{
+					"command": "fuzor-ai-transformer.refresh",
+					"when": "view == treeTransformer",
+					"group": "navigation@3"
+				},
+				{
+					"command": "fuzor-ai-transformer.openSettings",
+					"when": "view == treeTransformer",
+					"group": "navigation@4"
+				},
+				{
+					"command": "fuzor-ai-transformer.importTransformer",
+					"when": "view == treeTransformer",
+					"group": "navigation@5"
+				},
+				{
+					"command": "fuzor-ai-transformer.createFolder",
+					"when": "view == treeTransformer",
+					"group": "navigation@6"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "fuzor-ai-transformer.executeTransformer",
+					"when": "view == treeTransformer && viewItem == transformer",
+					"group": "inline"
+				},
+				{
+					"command": "fuzor-ai-transformer.exportTransformer",
+					"when": "view == treeTransformer && viewItem == transformer",
+					"group": "inline"
+				},
+				{
+					"command": "fuzor-ai-transformer.editTransformer",
+					"when": "view == treeTransformer && viewItem == transformer",
+					"group": "1_modification@1"
+				},
+				{
+					"command": "fuzor-ai-transformer.deleteTransformer",
+					"when": "view == treeTransformer && viewItem == transformer",
+					"group": "1_modification@2"
+				},
+				{
+					"command": "fuzor-ai-transformer.duplicateTransformer",
+					"when": "view == treeTransformer && viewItem == transformer",
+					"group": "1_modification@3"
+				},
+				{
+					"command": "fuzor-ai-transformer.deleteFolder",
+					"when": "view == treeTransformer && viewItem == folder",
+					"group": "1_modification@5"
+				},
+				{
+					"command": "fuzor-ai-transformer.deleteFolder",
+					"when": "view == treeTransformer && viewItem == folder",
+					"group": "inline"
+				},
+				{
+					"command": "fuzor-ai-transformer.renameFolder",
+					"when": "view == treeTransformer && viewItem == folder",
+					"group": "1_modification@6"
+				},
+				{
+					"command": "fuzor-ai-transformer.renameFolder",
+					"when": "view == treeTransformer && viewItem == folder",
+					"group": "inline"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run package",
+		"compile": "webpack",
+		"watch": "run-p watch:webpack start:webview",
+		"watch:webpack": "webpack --watch",
+		"package": "webpack --mode production --devtool hidden-source-map",
+		"compile-tests": "tsc -p . --outDir out",
+		"watch-tests": "tsc -p . -w --outDir out",
+		"pretest": "npm run compile-tests && npm run compile && npm run lint",
+		"lint": "eslint src",
+		"lint:fix": "eslint src --fix",
+		"check-types": "tsc --noEmit",
+		"format": "prettier . --check",
+		"format:fix": "prettier . --write",
+		"test": "vscode-test",
+		"start:webview": "cd webview-ui && npm run start",
+		"build:webview": "cd webview-ui && npm run build",
+		"test:webview": "cd webview-ui && npm run test",
+		"lint:webview": "cd webview-ui && eslint src",
+		"lint:fix:webview": "cd webview-ui && eslint src --fix",
+		"check-types:webview": "cd webview-ui && tsc --noEmit",
+		"publish:marketplace": "vsce publish && ovsx publish"
+	},
+	"dependencies": {
+		"@azure/openai": "^2.0.0",
+		"@google/generative-ai": "^0.21.0",
+		"@vscode/codicons": "^0.0.36",
+		"axios": "^1.7.9",
+		"generator-code": "^1.11.5",
+		"openai": "^4.79.1",
+		"uuid": "^11.0.5",
+		"yo": "^5.1.0"
+	},
+	"devDependencies": {
+		"@types/chai": "^5.0.1",
+		"@types/mocha": "^10.0.10",
+		"@types/node": "^22.10.7",
+		"@types/sinon": "^17.0.3",
+		"@types/vscode": "^1.96.0",
+		"@typescript-eslint/eslint-plugin": "^8.21.0",
+		"@typescript-eslint/parser": "^8.21.0",
+		"@vscode/test-cli": "^0.0.10",
+		"@vscode/test-electron": "^2.4.1",
+		"chai": "^5.1.2",
+		"copy-webpack-plugin": "^12.0.2",
+		"cross-env": "^7.0.3",
+		"eslint": "^9.18.0",
+		"mocha": "^11.0.1",
+		"npm-run-all": "^4.1.5",
+		"prettier": "^3.3.3",
+		"sinon": "^19.0.2",
+		"ts-loader": "^9.5.2",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.7.3",
+		"webpack": "^5.97.1",
+		"webpack-cli": "^6.0.1"
+	}
 }

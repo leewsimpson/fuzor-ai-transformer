@@ -1,20 +1,20 @@
 {
-    "version": "07-01-2025",
-    "transformers": [
-        {
-            "id": "T001",
-            "name": "JsonToXml",
-            "folder": "T001-JsonToXml"
-        },
-        {
-            "id": "T002",
-            "name": "XmlToJson",
-            "folder": "T002-XmlToJson"
-        },
-        {
-            "id": "T003",
-            "name": "CreateTestCases",
-            "folder": "T003-CreateTestCases"
-        }
-    ]
+	"version": "07-01-2025",
+	"transformers": [
+		{
+			"id": "T001",
+			"name": "JsonToXml",
+			"folder": "T001-JsonToXml"
+		},
+		{
+			"id": "T002",
+			"name": "XmlToJson",
+			"folder": "T002-XmlToJson"
+		},
+		{
+			"id": "T003",
+			"name": "CreateTestCases",
+			"folder": "T003-CreateTestCases"
+		}
+	]
 }

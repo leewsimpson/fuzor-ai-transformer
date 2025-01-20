@@ -8,38 +8,43 @@ This allows for saving, and maintaining of advanced prompts and templates, as we
 
 - **Multiple AI Model Support**: Choose from OpenAI or other modesl
 - **Customisable Transformers**: Create and manage transformers with:
-  - Wildcard file matching
-  - Custom prompt templates with placeholder support
-  - Configurable output file naming and structure
-  - Create, duplicate, edit, and delete transformers
-  - Browse and import transformers from online library (planned feature)
+    - Wildcard file matching
+    - Custom prompt templates with placeholder support
+    - Configurable output file naming and structure
+    - Create, duplicate, edit, and delete transformers
+    - Browse and import transformers from online library (planned feature)
 
 ## Use Cases
 
 The VS Code 'Fuzor-AI Transformer' Extension can be used for various scenarios, including:
 
 1. **Source Code Documentation**:
-   - Automatically generate documentation for code files
-   - Create API references from source code
-   - Generate inline comments for complex functions
+
+    - Automatically generate documentation for code files
+    - Create API references from source code
+    - Generate inline comments for complex functions
 
 2. **Code Refactoring**:
-   - Automate code style improvements
-   - Convert code between different patterns or paradigms
-   - Optimise code for performance or readability
+
+    - Automate code style improvements
+    - Convert code between different patterns or paradigms
+    - Optimise code for performance or readability
 
 3. **Code Conversions**:
-   - Convert from one language to another
+
+    - Convert from one language to another
 
 4. **Data Transformation**:
-   - Convert between different data formats (JSON, XML, CSV)
-   - Normalise data structures
-   - Generate sample data from schemas
+
+    - Convert between different data formats (JSON, XML, CSV)
+    - Normalise data structures
+    - Generate sample data from schemas
 
 5. **Localisation**:
-   - Translate documentation and UI strings
-   - Generate localised versions of code comments
-   - Create multilingual documentation sets
+
+    - Translate documentation and UI strings
+    - Generate localised versions of code comments
+    - Create multilingual documentation sets
 
 6. **Testing**
     - Generate unit tests for files / folders
@@ -50,18 +55,19 @@ The VS Code 'Fuzor-AI Transformer' Extension can be used for various scenarios, 
 ## [Design](design.md)
 
 ## Installation from Package
+
 1. Download from the github packages.
 2. In VS Code add the extention directly using the "install from VSIX"
-4. Configure your API keys in the settings:
-   - Open VS Code settings
-   - Navigate to "'Fuzor-AI Transformer'" section
-   - Enter API keys for your preferred AI providers
-5. Create your first transformer using the UI or via the command palette (`Ctrl+Shift+P` -> "Create Transformer")
-6. Configure:
-   - Input file patterns (e.g., `*.txt`, `src/**/*.js`)
-   - AI prompt template
-   - Output file naming and location
-7. Run the transformer and view results in the output panel
+3. Configure your API keys in the settings:
+    - Open VS Code settings
+    - Navigate to "'Fuzor-AI Transformer'" section
+    - Enter API keys for your preferred AI providers
+4. Create your first transformer using the UI or via the command palette (`Ctrl+Shift+P` -> "Create Transformer")
+5. Configure:
+    - Input file patterns (e.g., `*.txt`, `src/**/*.js`)
+    - AI prompt template
+    - Output file naming and location
+6. Run the transformer and view results in the output panel
 
 ## Installation from Source
 

@@ -1,19 +1,19 @@
 {
-    "id": "T002", 
-    "name": "XmlToJson",
-    "description": "Converts XML to JSON",    
-    "prompt": "Convert the following XML content into well-formatted JSON. Preserve all data structures and attributes. Ensure the JSON is valid and properly nested. {{content::file}}",
-    "input": [
-        {
-            "name": "content",
-            "description": "Path to file or folder",
-            "type": "folder",
-            "value": "",
-            "required": true
-        }
-    ],
-    "outputFolder": "/",
-    "outputFileName": "*.json",
-    "temperature": 0.7,
-    "processFormat": "eachFile"
+	"id": "T002",
+	"name": "XmlToJson",
+	"description": "Converts XML to JSON",
+	"prompt": "Convert the following XML content into well-formatted JSON. Preserve all data structures and attributes. Ensure the JSON is valid and properly nested. {{content::file}}",
+	"input": [
+		{
+			"name": "content",
+			"description": "Path to file or folder",
+			"type": "folder",
+			"value": "",
+			"required": true
+		}
+	],
+	"outputFolder": "/",
+	"outputFileName": "*.json",
+	"temperature": 0.7,
+	"processFormat": "eachFile"
 }

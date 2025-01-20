@@ -48,11 +48,7 @@
 		},
 		{
 			"label": "tasks: watch-tests",
-			"dependsOn": [
-				"npm: watch",
-				"npm: watch-tests",
-				"webview-ui: build"
-			],
+			"dependsOn": ["npm: watch", "npm: watch-tests", "webview-ui: build"],
 			"problemMatcher": []
 		}
 	]
