@@ -1,0 +1,65 @@
+name: Run Tests and Release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write    
+
+jobs:
+  test:
+    name: Run Tests
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      # Cache root dependencies - only reuse if package-lock.json exactly matches
+      - name: Cache root dependencies
+        uses: actions/cache@v4
+        id: root-cache
+        with:
+            path: node_modules
+            key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+
+      # Cache webview-ui dependencies - only reuse if package-lock.json exactly matches
+      - name: Cache webview-ui dependencies
+        uses: actions/cache@v4
+        id: webview-cache
+        with:
+            path: webview-ui/node_modules
+            key: ${{ runner.os }}-npm-webview-${{ hashFiles('webview-ui/package-lock.json') }}            
+
+      - name: Install root dependencies
+        if: steps.root-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Install webview-ui dependencies
+        if: steps.webview-cache.outputs.cache-hit != 'true'
+        run: cd webview-ui && npm ci
+
+      - name: Build Webview
+        run: cd webview-ui && npm run build
+
+      - name: Compile TypeScript
+        run: npm run compile-tests && npm run compile
+
+      - name: Run headless test
+        uses: GabrielBB/xvfb-action@v1.0
+        with:
+          run: npm test

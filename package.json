@@ -6,7 +6,7 @@
   "publisher": "Fuzor",
   "repository": {
     "type": "git",
-    "url": "https://github.com/leewsimpson/fuzor-ai-transformer.git"
+    "url": "https://github.com/Deloitte-Australia/fuzor-ai-transformer.git"
   },
   "engines": {
     "vscode": "^1.96.0"
@@ -22,7 +22,7 @@
         "fuzorAiTransformer.acceptTerms": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "Accept the [terms and conditions](https://github.com/leewsimpson/ai-file-transformer/blob/main/TERMS_AND_CONDITIONS.md) of using this extension"
+          "markdownDescription": "Accept the [terms and conditions](https://github.com/Deloitte-Australia/fuzor-ai-transformer/blob/main/TERMS_AND_CONDITIONS.md) of using this extension"
         },
         "fuzorAiTransformer.aiProvider": {
           "type": "string",
