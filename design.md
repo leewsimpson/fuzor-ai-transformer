@@ -33,10 +33,10 @@ The plugin is structured into several key components that work together to provi
 - **Webview Provider**: Implemented in `src/webviews/ViewEditTransformer.ts`, manages the communication between the extension and the React-based UI.
 
 - **React Components**: Located in `webview-ui/src/components/`, providing:
-  - Transformer management interface (`manageTransformerView.tsx`)
-  - Edit interface (`editTransformer.tsx`)
-  - View interface (`viewTransformer.tsx`)
-  - Library management (`transformerLibrary/`)
+    - Transformer management interface (`manageTransformerView.tsx`)
+    - Edit interface (`editTransformer.tsx`)
+    - View interface (`viewTransformer.tsx`)
+    - Library management (`transformerLibrary/`)
 
 ### Communication Layer
 
@@ -48,112 +48,121 @@ The plugin is structured into several key components that work together to provi
 ### Extension to Webview
 
 1. **Configuration Updates**:
-   - Extension sends transformer configurations to the webview
-   - Updates UI state through messages like `viewTransformer` or `editTransformer`
-   - Sends execution status updates during transformer processing
+
+    - Extension sends transformer configurations to the webview
+    - Updates UI state through messages like `viewTransformer` or `editTransformer`
+    - Sends execution status updates during transformer processing
 
 2. **Execution Feedback**:
-   - Notifies UI about execution states (started, finished, error)
-   - Provides real-time feedback during transformer execution
-   - Updates UI elements based on the current execution state
+    - Notifies UI about execution states (started, finished, error)
+    - Provides real-time feedback during transformer execution
+    - Updates UI elements based on the current execution state
 
 ### Webview to Extension
 
 1. **User Actions**:
-   - File selection through custom dialog
-   - Transformer execution requests
-   - Configuration saving and updating
-   - Prompt enhancement requests
+
+    - File selection through custom dialog
+    - Transformer execution requests
+    - Configuration saving and updating
+    - Prompt enhancement requests
 
 2. **UI State Management**:
-   - Manages editing states
-   - Handles execution states
-   - Controls view/edit mode switching
+    - Manages editing states
+    - Handles execution states
+    - Controls view/edit mode switching
 
 ## Key Features and Implementation
 
 ### Transformer Management
 
 1. **Configuration**:
-   - Users configure transformers via the UI
-   - Settings include input patterns, AI prompts, and output configurations
-   - Configurations are validated and stored by `TransformerManager`
+
+    - Users configure transformers via the UI
+    - Settings include input patterns, AI prompts, and output configurations
+    - Configurations are validated and stored by `TransformerManager`
 
 2. **Execution**:
-   - Transformers are executed through the execution engine
-   - Progress feedback is provided through VS Code's progress API
-   - Results are managed by the output file manager
+    - Transformers are executed through the execution engine
+    - Progress feedback is provided through VS Code's progress API
+    - Results are managed by the output file manager
 
 ### Prompt Engineering
 
 1. **Enhanced Editing**:
-   - Dedicated prompt editor with syntax highlighting
-   - Live validation of prompt syntax
-   - AI-powered prompt enhancement capabilities
+
+    - Dedicated prompt editor with syntax highlighting
+    - Live validation of prompt syntax
+    - AI-powered prompt enhancement capabilities
 
 2. **Preview System**:
-   - Real-time preview of processed prompts
-   - Variable substitution visualization
-   - Input validation feedback
+    - Real-time preview of processed prompts
+    - Variable substitution visualization
+    - Input validation feedback
 
 ## Security and Performance
 
 1. **Content Security**:
-   - Implements Content Security Policy (CSP) for webview
-   - Secures script execution through nonce generation
-   - Restricts resource loading to approved sources
+
+    - Implements Content Security Policy (CSP) for webview
+    - Secures script execution through nonce generation
+    - Restricts resource loading to approved sources
 
 2. **Resource Management**:
-   - Efficient file handling through VS Code's API
-   - Proper cleanup of temporary files and resources
-   - Cancellable transformer executions
+    - Efficient file handling through VS Code's API
+    - Proper cleanup of temporary files and resources
+    - Cancellable transformer executions
 
 ## Configuration and Setup
 
 1. **API Keys**:
-   - Secure storage of API keys in VS Code settings
-   - Support for multiple AI providers
-   - Environment-based configuration options
+
+    - Secure storage of API keys in VS Code settings
+    - Support for multiple AI providers
+    - Environment-based configuration options
 
 2. **Transformer Setup**:
-   - User-friendly interface for transformer creation
-   - Template-based configuration
-   - Input/output path management
+    - User-friendly interface for transformer creation
+    - Template-based configuration
+    - Input/output path management
 
 ## Testing Strategy
 
 1. **Unit Tests**:
-   - Component-level testing using Mocha and Chai
-   - Mock implementations for VS Code API
-   - Focus on behavior verification
+
+    - Component-level testing using Mocha and Chai
+    - Mock implementations for VS Code API
+    - Focus on behavior verification
 
 2. **Integration Tests**:
-   - End-to-end testing of transformer execution
-   - Webview interaction testing
-   - Configuration management verification
+    - End-to-end testing of transformer execution
+    - Webview interaction testing
+    - Configuration management verification
 
 ## Extension Points
 
 The plugin provides several extension points for future enhancements:
 
 1. **New AI Providers**:
-   - Abstract base class for language models
-   - Pluggable provider architecture
-   - Standardized interface for AI interactions
+
+    - Abstract base class for language models
+    - Pluggable provider architecture
+    - Standardized interface for AI interactions
 
 2. **Custom Transformers**:
-   - Support for user-defined transformers
-   - Template system for common transformations
-   - Library management for sharing transformers
+    - Support for user-defined transformers
+    - Template system for common transformations
+    - Library management for sharing transformers
 
 ## Future Considerations
 
 1. **Performance Optimization**:
-   - Caching of transformer results
-   - Batch processing capabilities
-   - Parallel execution support
+
+    - Caching of transformer results
+    - Batch processing capabilities
+    - Parallel execution support
 
 2. **Enhanced UI Features**:
-   - Rich preview capabilities
-   - Advanced prompt editing tools
-   - Improved feedback mechanisms
+    - Rich preview capabilities
+    - Advanced prompt editing tools
+    - Improved feedback mechanisms

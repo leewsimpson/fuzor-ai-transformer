@@ -1,5 +1,9 @@
 # VS Code 'Fuzor-AI Transformer' Extension
 
+[![Package and Release](https://github.com/Deloitte-Australia/fuzor-ai-transformer/actions/workflows/package.yml/badge.svg?branch=main)](https://github.com/Deloitte-Australia/fuzor-ai-transformer/actions/workflows/package.yml)
+[![Tests](https://github.com/Deloitte-Australia/fuzor-ai-transformer/actions/workflows/test-on-push.yml/badge.svg?branch=main&event=push)](https://github.com/Deloitte-Australia/fuzor-ai-transformer/actions/workflows/test-on-push.yml)
+[![Dependabot Updates](https://github.com/Deloitte-Australia/fuzor-ai-transformer/actions/workflows/dependabot/dependabot-updates/badge.svg?branch=main&event=push)](https://github.com/Deloitte-Australia/fuzor-ai-transformer/actions/workflows/dependabot/dependabot-updates)
+
 The **VS Code 'Fuzor-AI Transformer' Extension** is a powerful extension that enables AI-powered file transformations directly within Visual Studio Code. This Extension provides a customisable interface for processing files using various AI models, making it easy to automate complex workflows and enhance productivity.
 
 This allows for saving and maintaining advanced prompts and templates, as well as the ability to work with files directly - instead of having to copy/paste with a chat interface.
@@ -13,7 +17,7 @@ This allows for saving and maintaining advanced prompts and templates, as well a
 - **Customisable Transformers**: Create and manage transformers with:
     - Wildcard file matching
     - Custom prompt templates with placeholder support
-    - Dedicated prompt editor with syntax highlighting    
+    - Dedicated prompt editor with syntax highlighting
     - Configurable output file naming and structure
     - Create, duplicate, edit, and delete transformers
     - Folder support
@@ -24,33 +28,38 @@ This allows for saving and maintaining advanced prompts and templates, as well a
 - **Multiple AI Model Support**: Integrates with multiple AI providers:
     - OpenAI
     - Azure OpenAI
-    - GitHub CoPilot :) 
+    - GitHub CoPilot :)
     - Google Gemini
-    - DeepSeek    
+    - DeepSeek
 
 ## Use Cases
 
 The VS Code 'Fuzor-AI Transformer' Extension can be used for various scenarios, including:
 
 1. **Source Code Documentation**:
+
     - Automatically generate documentation for code files
     - Create API references from source code
     - Generate inline comments for complex functions
 
 2. **Code Refactoring**:
+
     - Automate code style improvements
     - Convert code between different patterns or paradigms
     - Optimise code for performance or readability
 
 3. **Code Conversions**:
+
     - Convert from one language to another
 
 4. **Data Transformation**:
+
     - Convert between different data formats (JSON, XML, CSV)
     - Normalise data structures
     - Generate sample data from schemas
 
 5. **Localisation**:
+
     - Translate documentation and UI strings
     - Generate localised versions of code comments
     - Create multilingual documentation sets
@@ -58,6 +67,10 @@ The VS Code 'Fuzor-AI Transformer' Extension can be used for various scenarios, 
 6. **Testing**:
     - Generate unit tests for files / folders
     - Generate test automations
+
+![VS Code 'Fuzor-AI Transformer' Extension Interface](screenshots/screenshot.png)
+
+![VS Code 'Fuzor-AI Transformer' Sample Output](screenshots/screenshot_sequence_diagram.png)
 
 ## [Design](design.md)
 
@@ -114,6 +127,7 @@ For more details on VS Code extension development, visit: https://code.visualstu
 - Ensure proper mocking of VS Code modules using `src/test/mocks/vscode.ts`
 
 ## Roadmap
+
 - Integration with additional AI providers
 - Advanced error handling and retry mechanisms
 - Batch processing and parallel execution support

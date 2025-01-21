@@ -35,7 +35,9 @@ const ManageTransformerView: React.FC = () => {
 						if (!prevConfig) return null
 						return {
 							...prevConfig,
-							prompt: message.prompt || "",
+							name: message.config!.name || prevConfig.name,
+							description: message.config!.description || prevConfig.description,
+							prompt: message.prompt || prevConfig.prompt,
 						}
 					})
 					setIsEditing(true)
@@ -89,15 +91,20 @@ const ManageTransformerView: React.FC = () => {
 		vscode.postMessage({ type: "enhancePrompt", config, data: JSON.stringify(data) })
 	}
 
-	const handleOpenInEditor = (prompt: string) => {
+	const handleOpenInEditor = (name: string, description: string, prompt: string) => {
 		if (!config) return
-		vscode.postMessage({ type: "openPromptInEditor", config, prompt })
+		let data = { name, description, prompt }
+		vscode.postMessage({ type: "openPromptInEditor", data: JSON.stringify(data) })
 	}
 
 	if (!config) {
 		return (
-			<div className="p-10">
-				<p className="text-xl font-semibold text-white/80">Waiting for transformer configuration...</p>
+			<div className="p-10 flex flex-col items-center justify-center min-h-[300px]">
+				<div className="animate-pulse">
+					<span className="codicon codicon-arrow-up" style={{ fontSize: "48px" }}></span>
+				</div>
+				<h2 className="mb-4 text-3xl font-bold text-white">Welcome to Fuzor!!</h2>
+				<p className="mb-8 text-xl text-white/90">Select a Fuzor Transformer to Begin!!</p>
 			</div>
 		)
 	}

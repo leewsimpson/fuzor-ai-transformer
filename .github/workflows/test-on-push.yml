@@ -1,4 +1,4 @@
-name: Run Tests and Release
+name: Run Test and Checks
 
 on:
     push:

@@ -98,7 +98,7 @@ suite("LLMClient", () => {
 
 			const client = new LLMClient()
 			const providers = await client.getSupportedAiProviders()
-			assert.deepStrictEqual(providers, ["OpenAI", "DeepSeek", "Azure OpenAI", "Google Gemini"])
+			assert.deepStrictEqual(providers, ["OpenAI", "DeepSeek", "Azure OpenAI", "Google Gemini", "Github Copilot"])
 		})
 	})
 

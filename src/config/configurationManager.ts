@@ -2,12 +2,11 @@
 import * as vscode from "vscode"
 
 export enum AIProvider {
-	Anthropic = "Anthropic",
 	OpenAI = "OpenAI",
 	AzureOpenAI = "Azure OpenAI",
 	GoogleGemini = "Google Gemini",
-	OpenRouter = "OpenRouter",
 	DeepSeek = "DeepSeek",
+	GithubCopilot = "Github Copilot",
 }
 
 export class ConfigurationManager {

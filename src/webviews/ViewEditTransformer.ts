@@ -195,6 +195,7 @@ export class ViewEditTransformer implements vscode.WebviewViewProvider {
 					case "enhancePrompt":
 						try {
 							const { name, description, prompt } = JSON.parse(message.data || "{}")
+							const config = message.config as TransformerConfig
 							const llm = new LLMClient()
 
 							const enhancementPrompt = `
@@ -215,7 +216,8 @@ export class ViewEditTransformer implements vscode.WebviewViewProvider {
                                 `
 
 							const llmResponse = await llm.sendRequest(enhancementPrompt)
-							this.sendCommandToWebView({ type: "updatePrompt", prompt: llmResponse })
+							let updatedConfig = { ...config, name: name, description: description }
+							this.sendCommandToWebView({ type: "updatePrompt", config: updatedConfig, prompt: llmResponse })
 
 							logOutputChannel.info("Prompt enhancement completed")
 						} catch (error) {
@@ -308,7 +310,8 @@ export class ViewEditTransformer implements vscode.WebviewViewProvider {
 						break
 					case "openPromptInEditor":
 						try {
-							const prompt = message.prompt
+							const { name, description, prompt } = JSON.parse(message.data || "{}")
+							const config = message.config as TransformerConfig
 							// Create a temporary file
 							// Ensure global storage directory exists
 							await fs.promises.mkdir(this.context.globalStorageUri.fsPath, { recursive: true })
@@ -341,7 +344,17 @@ export class ViewEditTransformer implements vscode.WebviewViewProvider {
 									const newContent = savedDoc.getText()
 									try {
 										this.transformerManager.validatePrompt(newContent)
-										this.sendCommandToWebView({ type: "updatePrompt", prompt: newContent })
+										let updatedConfig = {
+											...config,
+											name: name,
+											description: description,
+											prompt: newContent,
+										}
+										this.sendCommandToWebView({
+											type: "updatePrompt",
+											config: updatedConfig,
+											prompt: newContent,
+										})
 									} catch (error) {
 										if (error instanceof Error) {
 											logOutputChannel.error(`Error validating prompt: ${error.message}`)

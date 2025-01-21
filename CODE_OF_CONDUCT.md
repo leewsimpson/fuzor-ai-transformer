@@ -79,3 +79,7 @@ By submitting a pull request, you agree that your contributions will be licensed
 ## Thank You!
 
 Contributing to **Fuzor-AI Transformer** isn’t just about code—it’s about being part of a community shaping the future of AI-driven development. Let’s build something amazing together! 🚀
+
+### Disclaimer
+
+This doco is highly influenced by Cline

@@ -7,7 +7,7 @@ interface EditTransformerProps {
 	onSave: (config: TransformerConfig) => void
 	onCancel: () => void
 	handleEnhancePrompt: (name: string, description: string, prompt: string) => void
-	handleOpenInEditor: (prompt: string) => void
+	handleOpenInEditor: (name: string, description: string, prompt: string) => void
 }
 
 const EditTransformer: React.FC<EditTransformerProps> = ({
@@ -90,7 +90,7 @@ const EditTransformer: React.FC<EditTransformerProps> = ({
 							<span
 								className="codicon codicon-editor-layout text-xl text-[var(--vscode-foreground)] hover:text-[var(--vscode-button-hoverBackground)] cursor-pointer p-1 rounded relative group"
 								title="Preview"
-								onClick={() => handleOpenInEditor(prompt)}>
+								onClick={() => handleOpenInEditor(name, description, prompt)}>
 								<span className="absolute bottom-full mb-2 hidden group-hover:block px-2 py-1 text-sm text-[var(--vscode-foreground)] bg-[var(--vscode-editor-background)] rounded shadow">
 									Open in Editor
 								</span>
