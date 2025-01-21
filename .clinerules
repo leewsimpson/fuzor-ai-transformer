@@ -3,6 +3,7 @@ Review the solution architecture in design.md
 "compilerOptions": "module": "Node16", "target": "ES2022"...
 This is typescript, so only reference other ts files, no referencing .js
 do not execute 'npx tsc' directly - use 'npm run compile' if needed
+Australian English please
 
 Testing:
 Do NOT use Jest!
