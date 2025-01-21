@@ -24,7 +24,11 @@ The plugin is structured into several key components that work together to provi
 
 - **Configuration Management**: Handled by `src/config/configurationManager.ts`, which manages settings like model names, AI providers, and API keys.
 
-- **Execution Engine**: Implemented in `src/execution/executionEngine.ts`, coordinates the execution of transformations, including file validation and processing.
+- **Execution Architecture**:
+  - **Base Executer**: Abstract implementation in `src/execution/baseExecuter.ts`
+  - **Default Executer**: Concrete implementation in `src/execution/defaultExecuter.ts`
+  - **Executer Loader**: Dynamic loading system in `src/execution/executerLoader.ts`
+  - **Execution Engine**: Main coordinator in `src/execution/executionEngine.ts` handling validation and processing
 
 - **Language Model Integration**: Managed through `src/llm/` directory, providing abstract and concrete implementations for different AI providers (OpenAI, Azure, Gemini, etc.).
 
@@ -32,11 +36,18 @@ The plugin is structured into several key components that work together to provi
 
 - **Webview Provider**: Implemented in `src/webviews/ViewEditTransformer.ts`, manages the communication between the extension and the React-based UI.
 
-- **React Components**: Located in `webview-ui/src/components/`, providing:
-    - Transformer management interface (`manageTransformerView.tsx`)
-    - Edit interface (`editTransformer.tsx`)
-    - View interface (`viewTransformer.tsx`)
-    - Library management (`transformerLibrary/`)
+- **React Components**: Located in `webview-ui/src/components/`:
+  - Core Interfaces:
+    - `manageTransformerView.tsx` - Main management dashboard
+    - `editTransformer.tsx` - Configuration editor
+    - `viewTransformer.tsx` - Read-only visualization
+  - Library Components:
+    - `transformerLibrary/explorer.tsx` - File system style browser
+    - `transformerList.tsx` - Grid/list view of transformers
+  - Utilities:
+    - `Tooltip.tsx` - Contextual help system
+  - State Management:
+    - `transformerLibraryView.tsx` - Central library coordinator
 
 ### Communication Layer
 
@@ -90,10 +101,15 @@ The plugin is structured into several key components that work together to provi
 ### Prompt Engineering
 
 1. **Enhanced Editing**:
-
-    - Dedicated prompt editor with syntax highlighting
-    - Live validation of prompt syntax
-    - AI-powered prompt enhancement capabilities
+    - **Syntax Systems**:
+      - Fuzor language support (`syntaxes/fuzor.tmLanguage.json`)
+      - Prompt syntax highlighting (`syntaxes/fuzorprompt.tmLanguage.json`)
+    - **Validation Features**:
+      - Context-aware syntax checking
+      - AI-assisted prompt improvement suggestions
+    - **Editor Capabilities**:
+      - Smart autocompletion for transformer variables
+      - Integrated documentation tooltips
 
 2. **Preview System**:
     - Real-time preview of processed prompts
@@ -129,10 +145,19 @@ The plugin is structured into several key components that work together to provi
 ## Testing Strategy
 
 1. **Unit Tests**:
-
-    - Component-level testing using Mocha and Chai
-    - Mock implementations for VS Code API
-    - Focus on behavior verification
+    - **Execution System**:
+      - `baseExecuter.test.ts` - Abstract class validation
+      - `executer.test.ts` - Concrete implementation checks
+      - `executionEngine.test.ts` - Integration points
+    - **LLM Integration**:
+      - `llmClient.test.ts` - Provider contract verification
+    - **VS Code Mocks**:
+      - Full mock environment in `src/test/mocks/vscode.ts`
+      - Behavior verification through mocked APIs
+    - **Test Principles**:
+      - Zero Jest dependencies - pure Mocha/Chai
+      - Focus on public API contracts
+      - Validate error handling scenarios
 
 2. **Integration Tests**:
     - End-to-end testing of transformer execution
@@ -145,6 +170,28 @@ The plugin provides several extension points for future enhancements:
 
 1. **New AI Providers**:
 
+
+## Appendix: Core Types
+
+Key interfaces from `src/shared/transformerConfig.ts`:
+```typescript
+interface TransformerConfig {
+  id: string;
+  name: string;
+  inputPattern: string;
+  prompt: string;
+  outputSettings: {
+    extension: string;
+    namingStrategy: 'append' | 'replace';
+  };
+}
+
+interface ExecutionResult {
+  success: boolean;
+  outputPath?: string;
+  error?: TransformerError;
+}
+```
     - Abstract base class for language models
     - Pluggable provider architecture
     - Standardized interface for AI interactions
@@ -154,15 +201,3 @@ The plugin provides several extension points for future enhancements:
     - Template system for common transformations
     - Library management for sharing transformers
 
-## Future Considerations
-
-1. **Performance Optimization**:
-
-    - Caching of transformer results
-    - Batch processing capabilities
-    - Parallel execution support
-
-2. **Enhanced UI Features**:
-    - Rich preview capabilities
-    - Advanced prompt editing tools
-    - Improved feedback mechanisms
