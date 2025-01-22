@@ -6,6 +6,7 @@ export interface Input {
 	type: string
 	value: string
 	required: boolean
+	options?: string | null
 }
 
 export interface FuzorItem {

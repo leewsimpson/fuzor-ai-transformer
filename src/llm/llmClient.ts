@@ -16,10 +16,18 @@ export class LLMClient {
 
 		switch (provider) {
 			case AIProvider.OpenAI:
-				this.client = new OpenAIClient(ConfigurationManager.getAPIKey()!, ConfigurationManager.getModelName())
+				this.client = new OpenAIClient(
+					ConfigurationManager.getAPIKey()!,
+					ConfigurationManager.getModelName(),
+					ConfigurationManager.getTokenLimit(),
+				)
 				break
 			case AIProvider.DeepSeek:
-				this.client = new DeepSeekClient(ConfigurationManager.getAPIKey()!, ConfigurationManager.getModelName())
+				this.client = new DeepSeekClient(
+					ConfigurationManager.getAPIKey()!,
+					ConfigurationManager.getModelName(),
+					ConfigurationManager.getTokenLimit(),
+				)
 				break
 			case AIProvider.AzureOpenAI:
 				this.client = new AzureOpenAiClient(
@@ -27,10 +35,15 @@ export class LLMClient {
 					ConfigurationManager.getModelName(),
 					ConfigurationManager.getModelEndpoint()!,
 					ConfigurationManager.getApiVersion()!,
+					ConfigurationManager.getTokenLimit()!,
 				)
 				break
 			case AIProvider.GoogleGemini:
-				this.client = new GeminiClient(ConfigurationManager.getAPIKey()!, ConfigurationManager.getModelName()!)
+				this.client = new GeminiClient(
+					ConfigurationManager.getAPIKey()!,
+					ConfigurationManager.getModelName()!,
+					ConfigurationManager.getTokenLimit()!,
+				)
 				break
 			case AIProvider.GithubCopilot:
 				this.client = new GithubCopilot()

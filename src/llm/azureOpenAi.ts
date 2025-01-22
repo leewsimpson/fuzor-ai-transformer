@@ -21,8 +21,9 @@ interface AzureOpenAiResponse {
 export class AzureOpenAiClient extends LLMBase {
 	private apiKey: string
 	private apiUrl: string
+	private maxTokens: number
 
-	constructor(apiKey: string, model: string = "gpt-4o", endpoint: string, version: string) {
+	constructor(apiKey: string, model: string = "gpt-4o", endpoint: string, version: string, maxTokens = 4000) {
 		super(model)
 
 		if (!apiKey) {
@@ -36,6 +37,7 @@ export class AzureOpenAiClient extends LLMBase {
 
 		this.apiKey = apiKey
 		this.apiUrl = `${endpoint}/openai/deployments/${mod}/chat/completions?api-version=${ver}`
+		this.maxTokens = maxTokens
 	}
 
 	async sendRequest(promptOrMessages: LLMMessage[] | string, options?: any): Promise<string> {
@@ -57,7 +59,7 @@ export class AzureOpenAiClient extends LLMBase {
 					model: this.model,
 					messages,
 					temperature: options?.temperature || 0.7,
-					max_tokens: options?.maxTokens || 1000,
+					max_tokens: this.maxTokens || 1000,
 					top_p: options?.topP || 0.9,
 				}),
 			})

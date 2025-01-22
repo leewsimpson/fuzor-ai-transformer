@@ -2,7 +2,7 @@
 	"name": "fuzor-webview",
 	"displayName": "Fuzor WebView",
 	"description": "Tool for transforming files into different formats using AI",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"private": true,
 	"dependencies": {
 		"@testing-library/react": "^16.2.0",

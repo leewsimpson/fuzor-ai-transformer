@@ -66,7 +66,7 @@ suite("BaseExecuter Test Suite", () => {
 		// Create a mock executer that overrides generateUserMessage
 		class MockFileExecuter extends MockBaseExecuter {
 			override generateUserMessage(config: TransformerConfig): string {
-				return "Process file content\nAdditional Instructions : The output will be written to a file ending with extension .txt .  (reply with only the content - no conversation, explanations, lead-in, bullet points, placeholders, or surrounding quotes):"
+				return "Process file content\n### Additional LLM Instructions \n The output will be written to a file with an extension matching ${config.outputFileName}. Respond with only the content intended for the file. Do not include any conversation, explanations, lead-ins, bullet points, placeholders, input instructions, or additional notes in your response."
 			}
 		}
 
@@ -75,7 +75,7 @@ suite("BaseExecuter Test Suite", () => {
 
 		assert.equal(
 			message,
-			"Process file content\nAdditional Instructions : The output will be written to a file ending with extension .txt .  (reply with only the content - no conversation, explanations, lead-in, bullet points, placeholders, or surrounding quotes):",
+			"Process file content\n### Additional LLM Instructions \n The output will be written to a file with an extension matching ${config.outputFileName}. Respond with only the content intended for the file. Do not include any conversation, explanations, lead-ins, bullet points, placeholders, input instructions, or additional notes in your response.",
 		)
 	})
 
@@ -90,7 +90,7 @@ suite("BaseExecuter Test Suite", () => {
 
 		assert.equal(
 			message,
-			"Process input text\n\nAdditional Instructions : The output will be written to a file ending with extension .txt (reply with only the content - no conversation, explanations, lead-in, bullet points, placeholders, or surrounding quotes).",
+			"Process input text\n\n### Additional LLM Instructions \n The output will be written to a file with an extension matching .txt. Respond with only the content intended for the file. Do not include any conversation, explanations, lead-ins, bullet points, placeholders, input instructions, or additional notes in your response.",
 		)
 	})
 

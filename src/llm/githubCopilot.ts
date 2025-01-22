@@ -33,8 +33,6 @@ export class GithubCopilot extends LLMBase {
 
 		try {
 			logOutputChannel.info(`Preparing request payload...`)
-
-			logOutputChannel.error(`Model found in Github Copilot: ${model.name}`)
 			// send the messages array to the model and get the response
 			let chatResponse = await model.sendRequest(
 				messages,

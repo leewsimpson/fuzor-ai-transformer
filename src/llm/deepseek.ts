@@ -21,13 +21,15 @@ interface DeepSeekResponse {
 export class DeepSeekClient extends LLMBase {
 	private apiKey: string
 	private apiUrl = "https://api.deepseek.com/chat/completions"
+	private maxTokens: number
 
-	constructor(apiKey: string, model: string = "deepseek-chat") {
+	constructor(apiKey: string, model: string = "deepseek-chat", maxTokens = 4000) {
 		super(model)
 		if (!apiKey) {
 			throw new Error("DeepSeek API key is missing")
 		}
 		this.apiKey = apiKey
+		this.maxTokens = maxTokens
 	}
 
 	async sendRequest(promptOrMessages: LLMMessage[] | string, options?: any): Promise<string> {
@@ -49,7 +51,7 @@ export class DeepSeekClient extends LLMBase {
 					model: options?.model || this.model,
 					messages,
 					temperature: options?.temperature || 0.7,
-					max_tokens: options?.maxTokens || 1000,
+					max_tokens: this.maxTokens || 1000,
 					top_p: options?.topP || 0.9,
 				}),
 			})

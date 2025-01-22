@@ -4,10 +4,11 @@ import { log } from "console"
 
 export class GeminiClient extends LLMBase {
 	private apiKey: string
+	private maxTokens: number
 
-	constructor(apiKey: string, model: string) {
+	constructor(apiKey: string, model: string, maxTokens = 4000) {
 		super(model)
-
+		this.maxTokens = maxTokens
 		if (!apiKey) {
 			throw new Error("Gemini API key is missing")
 		}

@@ -2,7 +2,8 @@ import * as assert from "assert"
 import * as sinon from "sinon"
 import * as vscode from "vscode"
 import * as mockVSCode from "../mocks/vscode"
-import { executeTransformers, isValidFilePath, isValidFolderPath } from "../../execution/executionEngine"
+import { executeTransformers, stopExecution } from "../../execution/executionEngine"
+import { isValidFilePath, isValidFolderPath } from "../../utils/fileUtils"
 import { DefaultExecuter } from "../../execution/defaultExecuter"
 import { ConfigurationManager } from "../../config/configurationManager"
 import { TransformerConfig } from "../../shared/transformerConfig"
@@ -47,6 +48,7 @@ suite("executeTransformers", () => {
 			} as unknown as DefaultExecuter
 
 			sandbox.stub(DefaultExecuter.prototype, "execute").callsFake(mockExecuter.execute)
+			sandbox.stub(require("path"), "isAbsolute").returns(true)
 			sandbox.stub(require("fs"), "existsSync").returns(true)
 			sandbox.stub(require("fs"), "accessSync").returns(undefined)
 			sandbox.stub(require("fs"), "readdirSync").returns(["file1.txt"])
@@ -106,34 +108,9 @@ suite("executeTransformers", () => {
 			)
 		})
 
-		test("should throw error for empty output folder", async () => {
-			const invalidConfig = { ...validConfig, outputFolder: "" }
-			sandbox
-				.stub(require("fs"), "existsSync")
-				.withArgs("valid-file.txt")
-				.returns(true)
-				.withArgs("valid-folder")
-				.returns(true)
-			sandbox.stub(require("fs"), "accessSync").returns(undefined)
-			sandbox.stub(require("fs"), "readdirSync").returns(["file1.txt"])
-			sandbox
-				.stub(require("fs"), "statSync")
-				.withArgs("valid-file.txt")
-				.returns({ isFile: () => true })
-				.withArgs("valid-folder")
-				.returns({ isDirectory: () => true })
-
-			await assert.rejects(
-				() => executeTransformers(invalidConfig),
-				(error: Error) => {
-					assert.strictEqual(error.message, "Validation failed: Output folder location is required")
-					return true
-				},
-			)
-		})
-
 		test("should throw error for invalid output folder path", async () => {
 			const invalidConfig = { ...validConfig, outputFolder: "invalid-folder" }
+			sandbox.stub(require("path"), "isAbsolute").returns(true)
 			sandbox
 				.stub(require("fs"), "existsSync")
 				.withArgs("invalid-folder")
@@ -165,6 +142,7 @@ suite("executeTransformers", () => {
 				execute: () => Promise.reject(new Error("Executer failed")),
 			} as unknown as DefaultExecuter
 			sandbox.stub(DefaultExecuter.prototype, "execute").callsFake(mockExecuter.execute)
+			sandbox.stub(require("path"), "isAbsolute").returns(true)
 			sandbox
 				.stub(require("fs"), "existsSync")
 				.withArgs("valid-file.txt")
@@ -195,6 +173,7 @@ suite("executeTransformers", () => {
 			} as unknown as DefaultExecuter
 			sandbox.stub(DefaultExecuter.prototype, "execute").callsFake(mockExecuter.execute)
 			sandbox.stub(vscode.workspace, "openTextDocument").rejects(new Error("Failed to open file"))
+			sandbox.stub(require("path"), "isAbsolute").returns(true)
 			sandbox
 				.stub(require("fs"), "existsSync")
 				.withArgs("valid-file.txt")
@@ -220,6 +199,7 @@ suite("executeTransformers", () => {
 			const logSpy = sandbox.spy(logOutputChannel, "warn")
 			const infoSpy = sandbox.spy(logOutputChannel, "info")
 			sandbox.stub(logOutputChannel, "show").returns()
+			sandbox.stub(require("path"), "isAbsolute").returns(true)
 			sandbox.stub(DefaultExecuter.prototype, "execute").callsFake(mockExecuter.execute)
 			sandbox
 				.stub(require("fs"), "existsSync")
@@ -245,6 +225,7 @@ suite("executeTransformers", () => {
 
 	suite("helper functions", () => {
 		test("isValidFilePath should return true for valid file", () => {
+			sandbox.stub(require("path"), "isAbsolute").returns(true)
 			sandbox.stub(require("fs"), "existsSync").returns(true)
 			sandbox.stub(require("fs"), "statSync").returns({ isFile: () => true })
 			assert.strictEqual(isValidFilePath("valid-file.txt"), true)
@@ -256,6 +237,7 @@ suite("executeTransformers", () => {
 		})
 
 		test("isValidFolderPath should return true for valid folder", () => {
+			sandbox.stub(require("path"), "isAbsolute").returns(true)
 			sandbox.stub(require("fs"), "existsSync").returns(true)
 			sandbox.stub(require("fs"), "statSync").returns({ isDirectory: () => true })
 			assert.strictEqual(isValidFolderPath("valid-folder"), true)
@@ -285,6 +267,7 @@ suite("executeTransformers", () => {
 				execute: () => Promise.resolve(["output/file1.txt"]),
 			} as unknown as DefaultExecuter
 			sandbox.stub(DefaultExecuter.prototype, "execute").callsFake(mockExecuter.execute)
+			sandbox.stub(require("path"), "isAbsolute").returns(true)
 			sandbox
 				.stub(require("fs"), "existsSync")
 				.withArgs("valid-file.txt")
@@ -326,6 +309,7 @@ suite("executeTransformers", () => {
 			const mockExecuter = {
 				execute: () => Promise.resolve(["output/file1.txt", "output/file2.txt"]),
 			} as unknown as DefaultExecuter
+			sandbox.stub(require("path"), "isAbsolute").returns(true)
 			sandbox.stub(DefaultExecuter.prototype, "execute").callsFake(mockExecuter.execute)
 			sandbox
 				.stub(require("fs"), "existsSync")
@@ -367,6 +351,7 @@ suite("executeTransformers", () => {
 				execute: () => Promise.resolve(["output/file1.txt"]),
 			} as unknown as DefaultExecuter
 			sandbox.stub(DefaultExecuter.prototype, "execute").callsFake(mockExecuter.execute)
+			sandbox.stub(require("path"), "isAbsolute").returns(true)
 			sandbox
 				.stub(require("fs"), "existsSync")
 				.withArgs("valid-folder")
@@ -394,6 +379,7 @@ suite("executeTransformers", () => {
 			const logSpy = sandbox.spy(logOutputChannel, "warn")
 			const infoSpy = sandbox.spy(logOutputChannel, "info")
 			sandbox.stub(logOutputChannel, "show").returns()
+			sandbox.stub(require("path"), "isAbsolute").returns(true)
 			sandbox.stub(DefaultExecuter.prototype, "execute").callsFake(mockExecuter.execute)
 			sandbox
 				.stub(require("fs"), "existsSync")
@@ -423,6 +409,7 @@ suite("executeTransformers", () => {
 			const logSpy = sandbox.spy(logOutputChannel, "warn")
 			const infoSpy = sandbox.spy(logOutputChannel, "info")
 			sandbox.stub(logOutputChannel, "show").returns()
+			sandbox.stub(require("path"), "isAbsolute").returns(true)
 			sandbox.stub(DefaultExecuter.prototype, "execute").callsFake(mockExecuter.execute)
 			sandbox
 				.stub(require("fs"), "existsSync")

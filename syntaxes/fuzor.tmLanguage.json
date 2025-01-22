@@ -5,16 +5,28 @@
 	"patterns": [
 		{
 			"name": "meta.template.fuzor",
-			"match": "\\{\\{(\\w+)(::(\\w+|))(\\|\\w+)*\\}\\}",
+			"match": "\\{\\{(\\w+)(::(\\w+|))(::(\\w+|))?(\\|\\w+)*\\}\\}",
 			"captures": {
 				"0": {
-					"name": "string.template.fuzor"
+					"name": "entity.name.tag.fuzor.boundry"
 				},
 				"1": {
-					"name": "keyword.fuzor.key"
+					"name": "string.fuzor.key"
+				},
+				"2": {
+					"name": "keyword.fuzor.separator"
 				},
 				"3": {
-					"name": "keyword.fuzor.parameter"
+					"name": "string.fuzor.value"
+				},
+				"4": {
+					"name": "keyword.fuzor.separator"
+				},
+				"5": {
+					"name": "string.fuzor.options"
+				},
+				"6": {
+					"name": "entity.name.tag.fuzor.boundry"
 				}
 			}
 		}

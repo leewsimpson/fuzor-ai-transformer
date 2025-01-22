@@ -48,7 +48,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	})
 
 	treeViewRegistration.onDidChangeSelection(async (e) => {
-		logOutputChannel.info(`Selection changed: ${e.selection.length} items`)
 		if (e.selection.length > 0) {
 			const selectedItem = e.selection[0]
 			await vscode.commands.executeCommand("treeTransformer.selectItem", selectedItem)

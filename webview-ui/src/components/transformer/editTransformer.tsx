@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { TransformerConfig } from "../../../../src/shared/transformerConfig"
-import Tooltip from "./Tooltip"
+import Tooltip from "../shared/Tooltip"
+import { TokenCount } from "../shared/TokenCount"
 
 interface EditTransformerProps {
 	config: TransformerConfig
@@ -111,13 +112,18 @@ const EditTransformer: React.FC<EditTransformerProps> = ({
 						className="w-full px-2 py-1 text-[var(--vscode-foreground)] bg-[var(--vscode-input-background)] border border-[var(--vscode-input-border)] rounded"
 						rows={6}
 					/>
+					<div className="mt-2">
+						<TokenCount text={prompt} />
+					</div>
 				</div>
 
 				<div className="mb-4 form-group">
 					<div className="flex items-center justify-between mb-1">
 						<div className="flex items-center gap-1">
-							<Tooltip description="Controls the randomness of the AI's output (0 = deterministic, 2 = very random)" />
-							<label className="text-sm font-medium text-[var(--vscode-foreground)]">Temperature:</label>
+							<Tooltip description="The temperature field controls the randomness of the AI's output, ranging from 0 (deterministic) to 2 (highly creative). The default value is 1.0, balancing consistency and creativity. Adjust based on your needs: use 0.0 for precise tasks like coding or maths, 1.0 for data analysis, 1.3 for natural conversations or translations, and 1.5 for creative writing or poetry. Lower values ensure focus, while higher values encourage more varied and imaginative responses." />
+							<label className="text-sm font-medium text-[var(--vscode-foreground)]">
+								Temperature (Creativity):
+							</label>
 						</div>
 						<div className="text-sm text-[var(--vscode-foreground)]">{temperature.toFixed(1)}</div>
 					</div>
@@ -132,26 +138,27 @@ const EditTransformer: React.FC<EditTransformerProps> = ({
 					/>
 				</div>
 
-				<div className="hidden mb-4 form-group">
-					<label className="block text-sm font-medium text-[var(--vscode-foreground)] mb-1">Process Format:</label>
-					<div className="space-y-2">
-						<label className="flex items-center">
+				<div className="mb-4 form-group">
+					<div className="flex items-center gap-1 mb-1">
+						<Tooltip description="Process Format only applies to folders. Each File processes files one by one whereas Join Files joins all the content in the folder" />
+						<label className="block text-sm font-medium text-[var(--vscode-foreground)]">Process Format:</label>
+					</div>
+					<div className="flex gap-4">
+						<label className="flex items-center gap-2">
 							<input
 								type="radio"
 								value="eachFile"
 								checked={processFormat === "eachFile"}
 								onChange={() => setProcessFormat("eachFile")}
-								className="mr-2"
 							/>
 							<span className="text-[var(--vscode-foreground)]">Each File</span>
 						</label>
-						<label className="flex items-center">
+						<label className="flex items-center gap-2">
 							<input
 								type="radio"
 								value="joinFiles"
 								checked={processFormat === "joinFiles"}
 								onChange={() => setProcessFormat("joinFiles")}
-								className="mr-2"
 							/>
 							<span className="text-[var(--vscode-foreground)]">Join Files</span>
 						</label>
@@ -160,7 +167,7 @@ const EditTransformer: React.FC<EditTransformerProps> = ({
 
 				<div className="mb-4 form-group">
 					<div className="flex items-center gap-1 mb-1">
-						<Tooltip description="The name of the output file (leave blank to use input file name)" />
+						<Tooltip description="The name of the output file (Use patterns like *.txt or *-output.md or leave blank for 'transformer-output')" />
 						<label className="block text-sm font-medium text-[var(--vscode-foreground)]">Output File Name:</label>
 					</div>
 					<input

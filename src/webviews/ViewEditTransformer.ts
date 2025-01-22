@@ -7,6 +7,7 @@ import { TransformerManager } from "../transformers/transformerManager"
 import { TransformersProvider } from "../providers/TransformersProvider"
 import { LLMClient } from "../llm/llmClient"
 import { ExtensionCommand, WebViewCommand } from "../shared/commands"
+import { readFileContents, getAbsolutePath } from "../utils/fileUtils"
 
 export class ViewEditTransformer implements vscode.WebviewViewProvider {
 	private _view?: vscode.WebviewView
@@ -86,15 +87,25 @@ export class ViewEditTransformer implements vscode.WebviewViewProvider {
 						const fileUri = await vscode.window.showOpenDialog(options)
 						if (fileUri && fileUri[0]) {
 							const filePath = fileUri[0].fsPath
+							let relativePathFromWorkspaceRoot = filePath
+							//get relative path from the current workspace root if workspace is open
+							if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+								const workspaceRoot = vscode.workspace.workspaceFolders[0].uri.fsPath
+								const relativePath = path.relative(workspaceRoot, filePath)
+								if (relativePath) {
+									relativePathFromWorkspaceRoot = relativePath
+								}
+							}
+
 							if (isOutput) {
-								config.outputFolder = filePath
+								config.outputFolder = relativePathFromWorkspaceRoot
 								await this.transformerManager.updateTransformer(config)
 							} else {
 								const updatedInput = config.input.map((i) => {
 									if (i.name === message.fieldName) {
 										return {
 											...i,
-											value: filePath,
+											value: relativePathFromWorkspaceRoot,
 										}
 									}
 									return i
@@ -236,15 +247,15 @@ export class ViewEditTransformer implements vscode.WebviewViewProvider {
 							this.transformerManager.validatePrompt(config.prompt)
 
 							const placeholderRegex = /\{\{([^}]+)\}\}/g
-							const placeholders = new Set<{ name: string; type: string }>()
+							const placeholders = new Set<{ name: string; type: string; options: string | undefined }>()
 							let match
 							let processedPrompt = config.prompt
 							while ((match = placeholderRegex.exec(config.prompt))) {
-								const [inputName, inputType] = match[1].split("::")
+								const [inputName, inputType, inputOptions] = match[1].split("::")
 								logOutputChannel.debug(
-									`Found placeholder: ${match[1]} of type ${inputType} with name ${inputName}`,
+									`Found placeholder: ${match[1]} of type ${inputType} with name ${inputName} and options ${inputOptions}`,
 								)
-								placeholders.add({ name: inputName, type: inputType })
+								placeholders.add({ name: inputName, type: inputType, options: inputOptions })
 
 								const input = config.input.find((i) => i.name === inputName)
 								if (!input) {
@@ -258,23 +269,32 @@ export class ViewEditTransformer implements vscode.WebviewViewProvider {
 										case "text":
 										case "textArea":
 										case "string":
+										case "select":
 											processedPrompt = processedPrompt.replace("{{" + match[1] + "}}", inputValue)
 											break
 										case "file":
-											if (!fs.existsSync(inputValue)) {
-												throw new Error("Input file does not exist")
-											}
-											const stat = fs.lstatSync(inputValue)
-											if (stat.isDirectory()) {
-												throw new Error("Input is a directory. Preview only supports file now")
-											}
-											// Read the input file content
-											const fileContent = await fs.promises.readFile(inputValue, "utf8")
-
+											const fileContent = await readFileContents(inputValue)
 											// Replace placeholders in the prompt
 											processedPrompt = processedPrompt.replace("{{" + match[1] + "}}", fileContent)
 											break
 										case "folder":
+											if (config.processFormat === "joinFiles") {
+												const absolutePath = getAbsolutePath(inputValue)
+												if (!absolutePath || absolutePath === null) {
+													throw new Error("Invalid folder path")
+												}
+												const files = fs.readdirSync(absolutePath)
+												let joinedContent = ""
+												for (const file of files) {
+													const filePath = path.join(absolutePath, file)
+													const fileStat = fs.lstatSync(filePath)
+													if (fileStat.isFile() && !file.startsWith(".")) {
+														const fileContent = await readFileContents(filePath)
+														joinedContent += `FileName: ${file}\n${fileContent}\n\n`
+													}
+												}
+												processedPrompt = processedPrompt.replace("{{" + match[1] + "}}", joinedContent)
+											}
 											break
 									}
 								}

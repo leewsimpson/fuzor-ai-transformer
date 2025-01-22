@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react"
+import * as path from "path"
 import { TransformerConfig } from "../../../../src/shared/transformerConfig"
+import { TokenCount } from "../shared/TokenCount"
 
 interface ViewTransformerProps {
 	config: TransformerConfig
@@ -21,12 +23,18 @@ const ViewTransformer: React.FC<ViewTransformerProps> = ({
 	onPreview,
 }) => {
 	const [inputValues, setInputValues] = useState<{ [key: string]: string }>({})
+	const [outputFileName, setOutputFileName] = useState(config.outputFileName || "")
 	console.log("config", config)
 	useEffect(() => {
 		// Initialize input values from config
 		const initialValues = config.input?.reduce(
 			(acc, input) => {
-				acc[input.name] = input.value || ""
+				if (input.type === "select" && input.options) {
+					const options = JSON.parse(input.options)
+					acc[input.name] = input.value || options[0] || ""
+				} else {
+					acc[input.name] = input.value || ""
+				}
 				return acc
 			},
 			{} as { [key: string]: string },
@@ -53,6 +61,7 @@ const ViewTransformer: React.FC<ViewTransformerProps> = ({
 		}))
 		if (updatedInputs) {
 			config.input = updatedInputs
+			config.outputFileName = outputFileName
 		}
 		onExecute()
 	}
@@ -136,12 +145,19 @@ const ViewTransformer: React.FC<ViewTransformerProps> = ({
 							input.type === "input" ? (
 								<div className="flex items-center w-full">
 									<label className="font-medium text-[var(--vscode-foreground)] w-[15%]">{input.name}:</label>
-									<input
-										className="w-[75%] px-2 py-1 text-[var(--vscode-foreground)] bg-[var(--vscode-input-background)] border border-[var(--vscode-input-border)] rounded"
-										type="text"
-										value={input.value || ""}
-										readOnly
-									/>
+									<div className="w-[75%]">
+										<input
+											className="w-full px-2 py-1 text-[var(--vscode-foreground)] bg-[var(--vscode-input-background)] border border-[var(--vscode-input-border)] rounded"
+											type="text"
+											value={inputValues[input.name] || ""}
+											onChange={(e) =>
+												setInputValues((prev) => ({
+													...prev,
+													[input.name]: e.target.value,
+												}))
+											}
+										/>
+									</div>
 									<span
 										className="w-[10%] px-2 py-1 text-[var(--vscode-foreground)] hover:text-[var(--vscode-button-hoverBackground)] cursor-pointer flex items-center justify-center ml-2"
 										onClick={() => handleOpenDialogue(input.name, false)}>
@@ -151,31 +167,60 @@ const ViewTransformer: React.FC<ViewTransformerProps> = ({
 							) : input.type === "text" ? (
 								<div className="flex items-center w-full">
 									<label className="font-medium text-[var(--vscode-foreground)] w-[15%]">{input.name}:</label>
-									<input
-										className="w-[85%] px-2 py-1 text-[var(--vscode-foreground)] bg-[var(--vscode-input-background)] border border-[var(--vscode-input-border)] rounded"
-										type="text"
-										value={inputValues[input.name] || ""}
-										onChange={(e) =>
-											setInputValues((prev) => ({
-												...prev,
-												[input.name]: e.target.value,
-											}))
-										}
-									/>
+									<div className="w-[85%]">
+										<input
+											className="w-full px-2 py-1 text-[var(--vscode-foreground)] bg-[var(--vscode-input-background)] border border-[var(--vscode-input-border)] rounded"
+											type="text"
+											value={inputValues[input.name] || ""}
+											onChange={(e) =>
+												setInputValues((prev) => ({
+													...prev,
+													[input.name]: e.target.value,
+												}))
+											}
+										/>
+										<TokenCount text={inputValues[input.name] || ""} />
+									</div>
 								</div>
 							) : input.type === "textarea" || input.type === "textArea" ? (
 								<div className="flex items-center w-full">
 									<label className="font-medium text-[var(--vscode-foreground)] w-[15%]">{input.name}:</label>
-									<textarea
-										className="w-[85%] px-2 py-1 text-[var(--vscode-foreground)] bg-[var(--vscode-input-background)] border border-[var(--vscode-input-border)] rounded"
-										value={inputValues[input.name] || ""}
-										onChange={(e) =>
-											setInputValues((prev) => ({
-												...prev,
-												[input.name]: e.target.value,
-											}))
-										}
-									/>
+									<div className="w-[85%]">
+										<textarea
+											className="w-full px-2 py-1 text-[var(--vscode-foreground)] bg-[var(--vscode-input-background)] border border-[var(--vscode-input-border)] rounded"
+											value={inputValues[input.name] || ""}
+											onChange={(e) =>
+												setInputValues((prev) => ({
+													...prev,
+													[input.name]: e.target.value,
+												}))
+											}
+										/>
+										<TokenCount text={inputValues[input.name] || ""} />
+									</div>
+								</div>
+							) : input.type === "select" ? (
+								<div className="flex items-center w-full">
+									<label className="font-medium text-[var(--vscode-foreground)] w-[15%]">{input.name}:</label>
+									<div className="w-[85%]">
+										<select
+											className="w-full px-2 py-1 text-[var(--vscode-foreground)] bg-[var(--vscode-input-background)] border border-[var(--vscode-input-border)] rounded"
+											value={inputValues[input.name] || ""}
+											onChange={(e) =>
+												setInputValues((prev) => ({
+													...prev,
+													[input.name]: e.target.value,
+												}))
+											}>
+											{input.options &&
+												JSON.parse(input.options).map((option: string) => (
+													<option key={option} value={option}>
+														{option}
+													</option>
+												))}
+										</select>
+										<TokenCount text={inputValues[input.name] || ""} />
+									</div>
 								</div>
 							) : (
 								<div className="flex items-center space-x-2">
@@ -197,13 +242,30 @@ const ViewTransformer: React.FC<ViewTransformerProps> = ({
 							className="w-[75%] px-2 py-1 text-[var(--vscode-foreground)] bg-[var(--vscode-input-background)] border border-[var(--vscode-input-border)] rounded"
 							type="text"
 							value={config.outputFolder || ""}
-							readOnly
+							onChange={(e) => {
+								config.outputFolder = e.target.value
+							}}
+							placeholder="Enter relative path from workspace root"
 						/>
 						<span
 							className="w-[10%] px-2 py-1 text-[var(--vscode-foreground)] hover:text-[var(--vscode-button-hoverBackground)] cursor-pointer flex items-center justify-center ml-2"
 							onClick={() => handleOpenDialogue("outputFolder", true)}>
 							<span className="text-xl codicon codicon-folder-opened"></span>
 						</span>
+					</div>
+				</div>
+				<div className="flex items-center justify-between w-full py-2">
+					<div className="flex items-center w-full">
+						<span className="font-medium text-[var(--vscode-foreground)] w-[15%]">File Name:</span>
+						<input
+							className="w-[85%] px-2 py-1 text-[var(--vscode-foreground)] bg-[var(--vscode-input-background)] border border-[var(--vscode-input-border)] rounded"
+							type="text"
+							value={outputFileName}
+							onChange={(e) => {
+								setOutputFileName(e.target.value)
+							}}
+							placeholder="Use patterns like *.txt or *-output.md or leave blank for 'transformer-output'"
+						/>
 					</div>
 				</div>
 			</div>

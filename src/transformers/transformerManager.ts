@@ -3,6 +3,7 @@ import { FuzorFolder, TransformerConfig } from "../shared/transformerConfig"
 import { executeTransformers, stopExecution } from "../execution/executionEngine"
 import { FuzorItem } from "../shared/transformerConfig"
 import { TransformerError, TransformerNotFoundError, TransformerExistsError, TransformerValidationError } from "../types/errors"
+import { options } from "axios"
 
 /**
  * Manages transformer configurations and operations
@@ -131,14 +132,15 @@ export class TransformerManager {
 
 		// Extract placeholders from prompt
 		const placeholderRegex = /\{\{([^}]+)\}\}/g
-		const placeholders = new Set<{ name: string; type: string }>()
+		const placeholders = new Set<{ name: string; type: string; options: string | undefined }>()
 		let match
 
 		while ((match = placeholderRegex.exec(config.prompt)) !== null) {
 			const parts = match[1].split("::")
 			placeholders.add({
 				name: parts[0], // Use the first part as the name
-				type: parts[1] || "file", // Default to "file" if no type is provided
+				type: parts[1] || "file",
+				options: parts[2] || undefined,
 			})
 		}
 
@@ -155,6 +157,7 @@ export class TransformerManager {
 					description: `Input for ${placeholder.name}`,
 					required: true,
 					type: placeholder.type, // Use type from placeholder or default
+					options: placeholder.options || undefined, // Use options from placeholder or default
 					value: "", // Default empty value
 				},
 			)
@@ -192,14 +195,22 @@ export class TransformerManager {
 			throw new TransformerNotFoundError(id)
 		}
 
-		var item = this.fuzorItems.get(id)
+		const item = this.fuzorItems.get(id)
 		if (item?.type === "folder") {
-			this.fuzorItems.forEach((value, key) => async () => {
-				if (value.folder?.parentFolderId === id) {
-					await this.deleteTransformer(key)
+			// Collect all deletion promises
+			const deletions: Promise<void>[] = []
+
+			for (const [key, value] of this.fuzorItems) {
+				if (value.folder?.parentFolderId === id || value.config?.parentFolderId === id) {
+					deletions.push(this.deleteTransformer(key))
 				}
-			})
+			}
+
+			// Wait for all child deletions to complete
+			await Promise.all(deletions)
 		}
+
+		// Delete the item itself
 		this.fuzorItems.delete(id)
 		await this.saveTransformers()
 	}
@@ -269,7 +280,7 @@ export class TransformerManager {
 
 		// Extract placeholders from prompt
 		const placeholderRegex = /\{\{([^}]+)\}\}/g
-		const placeholders = new Set<{ name: string; type: string }>()
+		const placeholders = new Set<{ name: string; type: string; options?: string }>()
 		let match
 
 		// Throw error if there are no placeholders
@@ -281,7 +292,7 @@ export class TransformerManager {
 		placeholderRegex.lastIndex = 0
 
 		// Validate placeholder types and names
-		const validTypes = ["file", "folder", "string", "text", "textArea", ""]
+		const validTypes = ["file", "folder", "string", "text", "textArea", "", "select"]
 		const placeholderNames = new Set<string>()
 		let folderCount = 0
 
@@ -289,6 +300,14 @@ export class TransformerManager {
 			const parts = match[1].split("::")
 			const name = parts[0]
 			const type = parts[1] || "file"
+			const options = parts[2] || undefined
+
+			// Validate options if present
+			if (options) {
+				if (!options.startsWith("[") || !options.endsWith("]")) {
+					throw new TransformerValidationError(`Placeholder options must be enclosed in square brackets: ${name}`)
+				}
+			}
 
 			// Validate placeholder name
 			if (!name || name.trim() === "" || name.match(/[^a-zA-Z0-9]/)) {
