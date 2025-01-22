@@ -6,6 +6,7 @@ import { DeepSeekClient } from "./deepseek"
 import { AzureOpenAiClient } from "./azureOpenAi"
 import { GeminiClient } from "./gemini"
 import { GithubCopilot } from "./githubCopilot"
+import { Custom } from "./custom"
 
 export class LLMClient {
 	private client: LLMBase
@@ -34,6 +35,9 @@ export class LLMClient {
 			case AIProvider.GithubCopilot:
 				this.client = new GithubCopilot()
 				break
+			case AIProvider.Custom:
+				this.client = new Custom(ConfigurationManager.getAPIKey()!, ConfigurationManager.getModelEndpoint()!)
+				break
 			default:
 				throw new Error(`Unsupported provider: ${provider}`)
 		}
@@ -47,7 +51,14 @@ export class LLMClient {
 	}
 
 	async getSupportedAiProviders(): Promise<AIProvider[]> {
-		return [AIProvider.OpenAI, AIProvider.DeepSeek, AIProvider.AzureOpenAI, AIProvider.GoogleGemini, AIProvider.GithubCopilot]
+		return [
+			AIProvider.OpenAI,
+			AIProvider.DeepSeek,
+			AIProvider.AzureOpenAI,
+			AIProvider.GoogleGemini,
+			AIProvider.GithubCopilot,
+			AIProvider.Custom,
+		]
 	}
 
 	async getSelectedAiProvider(): Promise<AIProvider> {

@@ -54,6 +54,15 @@ suite("LLMClient", () => {
 			assert.ok(client)
 		})
 
+		test("should create Custom client when provider is Custom", () => {
+			sandbox.stub(ConfigurationManager, "getAIProvider").returns(AIProvider.Custom)
+			sandbox.stub(ConfigurationManager, "getAPIKey").returns("custom-api-key")
+			sandbox.stub(ConfigurationManager, "getModelEndpoint").returns("https://custom-endpoint")
+
+			const client = new LLMClient()
+			assert.ok(client)
+		})
+
 		test("should throw error for unsupported provider", () => {
 			sandbox.stub(ConfigurationManager, "getAIProvider").returns("Unsupported" as AIProvider)
 
@@ -93,12 +102,12 @@ suite("LLMClient", () => {
 	suite("getSupportedAiProviders", () => {
 		test("should return supported providers", async () => {
 			sandbox.stub(ConfigurationManager, "getAIProvider").returns(AIProvider.OpenAI)
-			sandbox.stub(ConfigurationManager, "getAPIKey").returns("test-key")
+			sandbox.stub(ConfigurationManager, "getAPIKey").returns("test-key") // Ensure API key is stubbed
 			sandbox.stub(ConfigurationManager, "getModelName").returns("gpt-4")
 
 			const client = new LLMClient()
 			const providers = await client.getSupportedAiProviders()
-			assert.deepStrictEqual(providers, ["OpenAI", "DeepSeek", "Azure OpenAI", "Google Gemini", "Github Copilot"])
+			assert.deepStrictEqual(providers, ["OpenAI", "DeepSeek", "Azure OpenAI", "Google Gemini", "Github Copilot", "Custom"])
 		})
 	})
 

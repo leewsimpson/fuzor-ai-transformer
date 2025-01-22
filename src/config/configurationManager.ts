@@ -7,6 +7,7 @@ export enum AIProvider {
 	GoogleGemini = "Google Gemini",
 	DeepSeek = "DeepSeek",
 	GithubCopilot = "Github Copilot",
+	Custom = "Custom",
 }
 
 export class ConfigurationManager {
