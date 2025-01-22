@@ -32,7 +32,11 @@ function validateConfig(config: TransformerConfig): void {
 	// Validate presence of files in a directory
 	function hasValidFiles(folderPath: string): boolean {
 		try {
-			const files = fs.readdirSync(folderPath)
+			let absolutePath = getAbsolutePath(folderPath)
+			if (!absolutePath || absolutePath === null) {
+				return false
+			}
+			const files = fs.readdirSync(absolutePath)
 			return files.length > 0
 		} catch {
 			return false
