@@ -150,7 +150,7 @@ export class TransformersProvider
 					: new TransformerTreeItem(
 							t.folder!.id,
 							t.folder!.name,
-							"Fuzor Transformer Collection",
+							t.folder!.description || "Fuzor Transformer Collection",
 							vscode.TreeItemCollapsibleState.Collapsed,
 							t,
 						)

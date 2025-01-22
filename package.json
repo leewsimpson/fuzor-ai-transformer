@@ -178,6 +178,11 @@
 				"command": "fuzor-ai-transformer.renameFolder",
 				"title": "Rename Folder",
 				"icon": "$(edit)"
+			},
+			{
+				"command": "fuzor-ai-transformer.editDescription",
+				"title": "Edit Description",
+				"icon": "$(note)"
 			}
 		],
 		"languages": [
@@ -292,7 +297,17 @@
 					"group": "1_modification@6"
 				},
 				{
+					"command": "fuzor-ai-transformer.editDescription",
+					"when": "view == treeTransformer && viewItem == folder",
+					"group": "1_modification@7"
+				},
+				{
 					"command": "fuzor-ai-transformer.renameFolder",
+					"when": "view == treeTransformer && viewItem == folder",
+					"group": "inline"
+				},
+				{
+					"command": "fuzor-ai-transformer.editDescription",
 					"when": "view == treeTransformer && viewItem == folder",
 					"group": "inline"
 				}

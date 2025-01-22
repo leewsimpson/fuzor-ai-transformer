@@ -34,3 +34,5 @@ yarn-error.log*
 webview-ui/.parcel-cache/
 
 webview-ui/build/
+
+.vscode/settings.json

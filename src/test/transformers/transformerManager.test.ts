@@ -351,6 +351,86 @@ suite("TransformerManager Behavior Tests", () => {
 	})
 
 	suite("Folder Operations", () => {
+		test("should validate folder name format", () => {
+			const validFolder = {
+				id: "test-folder",
+				name: "Valid_Name-123,;.",
+				description: "Test description",
+			}
+			assert.doesNotThrow(() => manager.validateFolderDetails(validFolder))
+
+			const invalidFolder = {
+				id: "test-folder",
+				name: "Invalid@Name",
+				description: "Test description",
+			}
+			assert.throws(
+				() => manager.validateFolderDetails(invalidFolder),
+				TransformerValidationError,
+				"Folder name can only contain alphanumeric characters and _- ,; .",
+			)
+		})
+
+		test("should validate folder name length", () => {
+			const validFolder = {
+				id: "test-folder",
+				name: "A".repeat(50),
+				description: "Test description",
+			}
+			assert.doesNotThrow(() => manager.validateFolderDetails(validFolder))
+
+			const invalidFolder = {
+				id: "test-folder",
+				name: "A".repeat(51),
+				description: "Test description",
+			}
+			assert.throws(
+				() => manager.validateFolderDetails(invalidFolder),
+				TransformerValidationError,
+				"Folder name must be 50 characters or less",
+			)
+		})
+
+		test("should validate folder description length", () => {
+			const validFolder = {
+				id: "test-folder",
+				name: "Test Folder",
+				description: "A".repeat(500),
+			}
+			assert.doesNotThrow(() => manager.validateFolderDetails(validFolder))
+
+			const invalidFolder = {
+				id: "test-folder",
+				name: "Test Folder",
+				description: "A".repeat(501),
+			}
+			assert.throws(
+				() => manager.validateFolderDetails(invalidFolder),
+				TransformerValidationError,
+				"Folder description must be 500 characters or less",
+			)
+		})
+
+		test("should require folder name and description", () => {
+			const missingName = {
+				id: "test-folder",
+				name: "",
+				description: "Test description",
+			}
+			assert.throws(() => manager.validateFolderDetails(missingName), TransformerValidationError, "Folder name is required")
+
+			const missingDescription = {
+				id: "test-folder",
+				name: "Test Folder",
+				description: "",
+			}
+			assert.throws(
+				() => manager.validateFolderDetails(missingDescription),
+				TransformerValidationError,
+				"Folder description is required",
+			)
+		})
+
 		test("should create new folder", async () => {
 			const folder = {
 				id: "test-folder",
@@ -387,6 +467,62 @@ suite("TransformerManager Behavior Tests", () => {
 			}
 
 			await assert.rejects(() => manager.createFolder(invalidFolder), TransformerValidationError)
+		})
+
+		test("should rename existing folder", async () => {
+			const folder = {
+				id: "test-folder",
+				name: "Test Folder",
+				description: "Test folder description",
+			}
+			await manager.createFolder(folder)
+
+			const newName = "Renamed Folder"
+			await manager.renameFolder(folder.id, newName)
+
+			const result = manager.getAllFuzorItems()
+			assert.strictEqual(result.length, 1)
+			assert.strictEqual(result[0].folder?.name, newName)
+		})
+
+		test("should throw error when renaming non-existent folder", async () => {
+			await assert.rejects(() => manager.renameFolder("non-existent", "New Name"), TransformerNotFoundError)
+		})
+
+		test("should validate inputs when renaming folder", async () => {
+			const folder = {
+				id: "test-folder",
+				name: "Test Folder",
+				description: "Test folder description",
+			}
+			await manager.createFolder(folder)
+
+			await assert.rejects(() => manager.renameFolder("", "New Name"), TransformerValidationError)
+			await assert.rejects(() => manager.renameFolder(folder.id, ""), TransformerValidationError)
+		})
+
+		test("should update folder description", async () => {
+			const folder = {
+				id: "test-folder",
+				name: "Test Folder",
+				description: "Test folder description",
+			}
+			await manager.createFolder(folder)
+
+			const newDescription = "Updated description"
+			await manager.editDescription(folder.id, newDescription)
+
+			const result = manager.getAllFuzorItems()
+			assert.strictEqual(result.length, 1)
+			assert.strictEqual(result[0].folder?.description, newDescription)
+		})
+
+		test("should throw error when updating non-existent folder description", async () => {
+			await assert.rejects(() => manager.editDescription("non-existent", "New Description"), TransformerNotFoundError)
+		})
+
+		test("should validate folder ID when updating description", async () => {
+			await assert.rejects(() => manager.editDescription("", "New Description"), TransformerValidationError)
 		})
 	})
 

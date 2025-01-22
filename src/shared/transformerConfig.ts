@@ -18,6 +18,7 @@ export interface FuzorItem {
 export interface FuzorFolder {
 	id: string
 	name: string
+	description?: string
 	parentFolderId?: string | null
 }
 

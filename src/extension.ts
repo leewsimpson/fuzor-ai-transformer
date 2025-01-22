@@ -304,6 +304,26 @@ export async function activate(context: vscode.ExtensionContext) {
 				}
 			}
 		}),
+		vscode.commands.registerCommand("fuzor-ai-transformer.editDescription", async (item: TransformerTreeItem) => {
+			if (item?.fuzorItem.folder !== undefined || item?.fuzorItem.folder !== null) {
+				const newDescription = await vscode.window.showInputBox({
+					prompt: "Enter folder description",
+					value: item.fuzorItem.folder!.description,
+					placeHolder: "Optional description for the folder",
+				})
+
+				if (newDescription !== undefined) {
+					// Allow empty string to clear description
+					try {
+						await transformerManager.editDescription(item.fuzorItem.folder!.id, newDescription)
+						transformersProvider.refresh()
+						vscode.window.showInformationMessage("Folder description updated")
+					} catch (error) {
+						vscode.window.showErrorMessage(`Failed to update description: ${error}`)
+					}
+				}
+			}
+		}),
 	]
 
 	// Add everything to context subscriptions
