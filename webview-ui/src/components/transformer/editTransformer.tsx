@@ -36,6 +36,11 @@ const EditTransformer: React.FC<EditTransformerProps> = ({
 	const [processFormat, setProcessFormat] = useState(config.processFormat || "eachFile")
 	const [outputFileName, setOutputFileName] = useState(config.outputFileName || "")
 
+	if (config.name=== 'New Transformer') {
+		config.name = ''
+		config.description = ''
+	}
+
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault()
 		onSave({
@@ -62,6 +67,7 @@ const EditTransformer: React.FC<EditTransformerProps> = ({
 					<input
 						type="text"
 						value={name}
+						autoFocus
 						onChange={(e) => setName(e.target.value)}
 						className="w-full px-2 py-1 text-[var(--vscode-foreground)] bg-[var(--vscode-input-background)] border border-[var(--vscode-input-border)] rounded"
 						required
