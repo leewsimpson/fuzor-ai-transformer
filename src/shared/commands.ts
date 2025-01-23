@@ -11,9 +11,11 @@ export interface WebViewCommand {
 		| "executionStopped"
 		| "executionFinished"
 		| "viewTransfomerLibrary"
+		| "validationResult"
 	config?: TransformerConfig
 	prompt?: string
 	library?: TransformerLibrary
+	data?: string
 }
 
 export interface ExtensionCommand {
@@ -31,6 +33,7 @@ export interface ExtensionCommand {
 		| "openPromptInEditor"
 		| "saveTransformer"
 		| "importTransformer"
+		| "validateConfig"
 	config?: TransformerConfig
 	isOutput?: boolean
 	fieldName?: string

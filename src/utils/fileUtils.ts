@@ -64,7 +64,8 @@ export async function readFileContents(filePath: string): Promise<string> {
 	if (stat.isDirectory()) {
 		throw new Error("Input is a directory. Preview only supports file now")
 	}
+
 	// Read the input file content
-	const fileContent = await fs.promises.readFile(absolutePath, "utf8")
+	const fileContent = fs.readFileSync(absolutePath, "utf8")
 	return fileContent
 }

@@ -9,6 +9,11 @@ const ManageTransformerView: React.FC = () => {
 	const [config, setConfig] = useState<TransformerConfig | null>(null)
 	const [isExecuting, setIsExecuting] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
+	const [validationResult, setValidationResult] = useState<{
+		isSuccess: boolean | undefined
+		message: string
+		tokenCount: number
+	} | null>({ isSuccess: undefined, message: "Not validated", tokenCount: 0 })
 
 	useEffect(() => {
 		const handleMessage = (event: MessageEvent) => {
@@ -18,10 +23,12 @@ const ManageTransformerView: React.FC = () => {
 				case "viewTransformer":
 					setConfig(message.config || null)
 					setIsEditing(false)
+					setValidationResult({ isSuccess: undefined, message: "Not validated", tokenCount: 0 })
 					break
 				case "editTransformer":
 					setConfig(message.config || null)
 					setIsEditing(true)
+					setValidationResult({ isSuccess: undefined, message: "Not validated", tokenCount: 0 })
 					break
 				case "executionStarted":
 					setIsExecuting(true)
@@ -40,7 +47,12 @@ const ManageTransformerView: React.FC = () => {
 							prompt: message.prompt || prevConfig.prompt,
 						}
 					})
+					setValidationResult({ isSuccess: undefined, message: "Not validated", tokenCount: 0 })
 					setIsEditing(true)
+					break
+				case "validationResult":
+					let val = JSON.parse(message.data!)
+					setValidationResult({ isSuccess: val.isSuccess, message: val.message, tokenCount: val.tokenCount })
 					break
 				default:
 					break
@@ -97,6 +109,12 @@ const ManageTransformerView: React.FC = () => {
 		vscode.postMessage({ type: "openPromptInEditor", data: JSON.stringify(data) })
 	}
 
+	const handleValidate = () => {
+		if (!config) return
+		console.log("handleValidate invoked")
+		vscode.postMessage({ type: "validateConfig", config })
+	}
+
 	if (!config) {
 		return (
 			<div className="p-10 flex flex-col items-center justify-center min-h-[300px]">
@@ -113,6 +131,7 @@ const ManageTransformerView: React.FC = () => {
 		<EditTransformer
 			config={config!}
 			onSave={(updatedConfig) => {
+				setValidationResult({ isSuccess: undefined, message: "Not validated", tokenCount: 0 })
 				vscode.postMessage({ type: "saveTransformer", config: updatedConfig })
 			}}
 			onCancel={() => setIsEditing(false)}
@@ -123,11 +142,14 @@ const ManageTransformerView: React.FC = () => {
 		<ViewTransformer
 			config={config}
 			isExecuting={isExecuting}
+			validationResult={validationResult}
 			onEdit={handleEdit}
 			onExecute={handleExecute}
 			onStop={handleStop}
 			handleOpenFileDialogClick={handleOpenFileDialogClick}
 			onPreview={handlePreview}
+			onValidate={handleValidate}
+			setValidationResult={setValidationResult}
 		/>
 	)
 }

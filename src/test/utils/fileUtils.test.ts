@@ -89,7 +89,7 @@ suite("FileUtils Test Suite", () => {
 		sandbox.stub(require("fs"), "existsSync").returns(true)
 		sandbox.stub(require("fs"), "statSync").returns({ isFile: () => true })
 		sandbox.stub(require("fs"), "lstatSync").returns({ isDirectory: () => false })
-		sandbox.stub(require("fs").promises, "readFile").resolves(expectedContent)
+		sandbox.stub(require("fs"), "readFileSync").resolves(expectedContent)
 
 		const content = await readFileContents("/valid/file.txt")
 		assert.equal(content, expectedContent)

@@ -6,25 +6,40 @@ import { TokenCount } from "../shared/TokenCount"
 interface ViewTransformerProps {
 	config: TransformerConfig
 	isExecuting: boolean
+	validationResult: { isSuccess: boolean | undefined; message: string; tokenCount: number } | null
 	onEdit: () => void
 	onExecute: () => void
 	onStop: () => void
 	handleOpenFileDialogClick: (name: string, isOutput: boolean) => void
 	onPreview: () => void
+	onValidate: () => void
+	setValidationResult: (result: { isSuccess: boolean | undefined; message: string; tokenCount: number } | null) => void
 }
 
 const ViewTransformer: React.FC<ViewTransformerProps> = ({
 	config,
 	isExecuting,
+	validationResult,
 	onEdit,
 	onExecute,
 	onStop,
 	handleOpenFileDialogClick,
 	onPreview,
+	onValidate,
+	setValidationResult,
 }) => {
 	const [inputValues, setInputValues] = useState<{ [key: string]: string }>({})
 	const [outputFileName, setOutputFileName] = useState(config.outputFileName || "")
+
+	const resetValidation = () => {
+		setValidationResult({
+			isSuccess: undefined,
+			message: "",
+			tokenCount: 0,
+		})
+	}
 	console.log("config", config)
+
 	useEffect(() => {
 		// Initialize input values from config
 		const initialValues = config.input?.reduce(
@@ -53,6 +68,19 @@ const ViewTransformer: React.FC<ViewTransformerProps> = ({
 		}
 		onPreview()
 	}
+
+	const handleValidate = async () => {
+		// Update config with current values
+		const updatedInputs = config.input?.map((input) => ({
+			...input,
+			value: inputValues[input.name] || "",
+		}))
+		if (updatedInputs) {
+			config.input = updatedInputs
+		}
+		onValidate()
+	}
+
 	const handleExecute = () => {
 		// Update config with current values
 		const updatedInputs = config.input?.map((input) => ({
@@ -65,6 +93,7 @@ const ViewTransformer: React.FC<ViewTransformerProps> = ({
 		}
 		onExecute()
 	}
+
 	const handleOpenDialogue = (fieldName: string, isOutput: boolean) => {
 		// Update config with current values
 		const updatedInputs = config.input?.map((input) => ({
@@ -76,6 +105,7 @@ const ViewTransformer: React.FC<ViewTransformerProps> = ({
 		}
 		handleOpenFileDialogClick(fieldName, isOutput)
 	}
+
 	return (
 		<div className="space-y-4">
 			<div className="bg-[var(--vscode-editor-background)] p-4 rounded-lg shadow-md flex flex-col space-y-4">
@@ -111,15 +141,40 @@ const ViewTransformer: React.FC<ViewTransformerProps> = ({
 						</div>
 					</div>
 					<div className="flex items-center space-x-2">
-						<div className="flex items-center space-x-2 cursor-pointer group">
+						<div className="flex items-center space-x-2 cursor-pointer group" onClick={handleValidate}>
 							<span
-								className="w-8 h-8 codicon codicon-folder-opened text-xl text-[var(--vscode-foreground)] flex justify-center items-center p-2 rounded-full group-hover:text-[var(--vscode-button-hoverBackground)]"
-								title="Test"></span>
-							<span className="text-sm text-[var(--vscode-foreground)] group-hover:text-[var(--vscode-button-hoverBackground)]">
-								Test
-							</span>
+								className={`w-8 h-8 codicon ${
+									validationResult?.isSuccess === true
+										? "codicon-verified-filled text-green-500"
+										: validationResult?.isSuccess === false
+											? "codicon-error text-red-500"
+											: "codicon-beaker"
+								} text-xl text-[var(--vscode-foreground)] flex justify-center items-center p-2 rounded-full group-hover:text-[var(--vscode-button-hoverBackground)]`}
+								title="Validate"></span>
+							<div className="flex flex-col">
+								<span
+									className={`text-sm ${
+										validationResult?.isSuccess === true
+											? "text-green-500"
+											: validationResult?.isSuccess === false
+												? "text-red-500"
+												: "text-[var(--vscode-foreground)]"
+									} group-hover:text-[var(--vscode-button-hoverBackground)]`}>
+									{validationResult?.isSuccess === true
+										? "Valid"
+										: validationResult?.isSuccess === false
+											? "InValid"
+											: "Validate"}
+								</span>
+								{validationResult?.isSuccess && (
+									<span className="text-xs text-[var(--vscode-descriptionForeground)]">
+										{validationResult.tokenCount} tokens
+									</span>
+								)}
+							</div>
 						</div>
 					</div>
+
 					<div className="flex items-center space-x-2">
 						<div className="flex items-center space-x-2 cursor-pointer group" onClick={onEdit}>
 							<span
@@ -132,6 +187,14 @@ const ViewTransformer: React.FC<ViewTransformerProps> = ({
 					</div>
 				</div>
 			</div>
+			{/* Show validationResult.message if validationResult.isSuccess is false */}
+			{validationResult?.isSuccess === false && (
+				<div className="space-y-2 bg-[var(--vscode-editor-background)] p-4 rounded-lg shadow-md">
+					<div className="flex items-center space-x-2">
+						<span className="text-xs text-red-500">{validationResult.message}</span>
+					</div>
+				</div>
+			)}
 			<div className="space-y-2 bg-[var(--vscode-editor-background)] p-4 rounded-lg shadow-md">
 				<h4 className="mb-2 text-lg font-semibold text-[var(--vscode-foreground)]">Inputs</h4>
 				{config.input?.map((input) => (
@@ -150,12 +213,13 @@ const ViewTransformer: React.FC<ViewTransformerProps> = ({
 											className="w-full px-2 py-1 text-[var(--vscode-foreground)] bg-[var(--vscode-input-background)] border border-[var(--vscode-input-border)] rounded"
 											type="text"
 											value={inputValues[input.name] || ""}
-											onChange={(e) =>
+											onChange={(e) => {
 												setInputValues((prev) => ({
 													...prev,
 													[input.name]: e.target.value,
 												}))
-											}
+												resetValidation()
+											}}
 										/>
 									</div>
 									<span
@@ -172,12 +236,13 @@ const ViewTransformer: React.FC<ViewTransformerProps> = ({
 											className="w-full px-2 py-1 text-[var(--vscode-foreground)] bg-[var(--vscode-input-background)] border border-[var(--vscode-input-border)] rounded"
 											type="text"
 											value={inputValues[input.name] || ""}
-											onChange={(e) =>
+											onChange={(e) => {
 												setInputValues((prev) => ({
 													...prev,
 													[input.name]: e.target.value,
 												}))
-											}
+												resetValidation()
+											}}
 										/>
 										<TokenCount text={inputValues[input.name] || ""} />
 									</div>
@@ -189,12 +254,13 @@ const ViewTransformer: React.FC<ViewTransformerProps> = ({
 										<textarea
 											className="w-full px-2 py-1 text-[var(--vscode-foreground)] bg-[var(--vscode-input-background)] border border-[var(--vscode-input-border)] rounded"
 											value={inputValues[input.name] || ""}
-											onChange={(e) =>
+											onChange={(e) => {
 												setInputValues((prev) => ({
 													...prev,
 													[input.name]: e.target.value,
 												}))
-											}
+												resetValidation()
+											}}
 										/>
 										<TokenCount text={inputValues[input.name] || ""} />
 									</div>
@@ -263,6 +329,7 @@ const ViewTransformer: React.FC<ViewTransformerProps> = ({
 							value={outputFileName}
 							onChange={(e) => {
 								setOutputFileName(e.target.value)
+								resetValidation()
 							}}
 							placeholder="Use patterns like *.txt or *-output.md or leave blank for 'transformer-output'"
 						/>

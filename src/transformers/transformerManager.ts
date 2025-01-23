@@ -4,6 +4,7 @@ import { executeTransformers, stopExecution } from "../execution/executionEngine
 import { FuzorItem } from "../shared/transformerConfig"
 import { TransformerError, TransformerNotFoundError, TransformerExistsError, TransformerValidationError } from "../types/errors"
 import { options } from "axios"
+import { validatePrompt } from "../utils/promptUtils"
 
 /**
  * Manages transformer configurations and operations
@@ -293,7 +294,7 @@ export class TransformerManager {
 			throw new TransformerValidationError("Transformer prompt is required")
 		}
 
-		this.validatePrompt(config.prompt)
+		validatePrompt(config.prompt)
 
 		// Temperature validation
 		if (typeof config.temperature !== "number" || isNaN(config.temperature)) {
@@ -407,69 +408,6 @@ export class TransformerManager {
 		await this.saveTransformers()
 	}
 
-	// ---- Validators ----
-	public validatePrompt(prompt: string): void {
-		if (!prompt || typeof prompt !== "string") {
-			throw new TransformerValidationError("Prompt cannot be empty")
-		}
-
-		// Extract placeholders from prompt
-		const placeholderRegex = /\{\{([^}]+)\}\}/g
-		const placeholders = new Set<{ name: string; type: string; options?: string }>()
-		let match
-
-		// Throw error if there are no placeholders
-		if (!prompt.match(placeholderRegex)) {
-			throw new TransformerValidationError("Prompt must contain at least one placeholder")
-		}
-
-		// Reset regex state
-		placeholderRegex.lastIndex = 0
-
-		// Validate placeholder types and names
-		const validTypes = ["file", "folder", "string", "text", "textArea", "", "select"]
-		const placeholderNames = new Set<string>()
-		let folderCount = 0
-
-		while ((match = placeholderRegex.exec(prompt)) !== null) {
-			const parts = match[1].split("::")
-			const name = parts[0]
-			const type = parts[1] || "file"
-			const options = parts[2] || undefined
-
-			// Validate options if present
-			if (options) {
-				if (!options.startsWith("[") || !options.endsWith("]")) {
-					throw new TransformerValidationError(`Placeholder options must be enclosed in square brackets: ${name}`)
-				}
-			}
-
-			// Validate placeholder name
-			if (!name || name.trim() === "" || name.match(/[^a-zA-Z0-9]/)) {
-				throw new TransformerValidationError(`Invalid placeholder name: ${name}`)
-			}
-
-			// Validate placeholder type
-			if (!validTypes.includes(type)) {
-				throw new TransformerValidationError(`Invalid placeholder type: ${type}`)
-			}
-
-			// Check for duplicate names
-			if (placeholderNames.has(name)) {
-				throw new TransformerValidationError(`Duplicate placeholder name: ${name}`)
-			}
-			placeholderNames.add(name)
-
-			// Count folder placeholders
-			if (type === "folder") {
-				folderCount++
-				if (folderCount > 1) {
-					throw new TransformerValidationError("A prompt can only have a maximum of 1 placeholder of type folder")
-				}
-			}
-		}
-	}
-
 	public validateFolderDetails(folder: FuzorFolder): void {
 		// Name validation
 		const namePattern = /^[a-zA-Z0-9_\-,;. ]+$/
@@ -490,5 +428,9 @@ export class TransformerManager {
 		if (folder.description.length > 500) {
 			throw new TransformerValidationError("Folder description must be 500 characters or less")
 		}
+	}
+
+	public validatePrompt(prompt: string): void {
+		validatePrompt(prompt)
 	}
 }

@@ -8,6 +8,9 @@ import { TransformersProvider } from "../providers/TransformersProvider"
 import { LLMClient } from "../llm/llmClient"
 import { ExtensionCommand, WebViewCommand } from "../shared/commands"
 import { readFileContents, getAbsolutePath } from "../utils/fileUtils"
+import { generatePrompt, validatePrompt } from "../utils/promptUtils"
+import { validate } from "uuid"
+import { countTokens } from "../utils/tokenUtils"
 
 export class ViewEditTransformer implements vscode.WebviewViewProvider {
 	private _view?: vscode.WebviewView
@@ -239,66 +242,60 @@ export class ViewEditTransformer implements vscode.WebviewViewProvider {
 							}
 						}
 						break
+					case "validateConfig":
+						try {
+							const config = message.config as TransformerConfig
+
+							// validate prompt
+							validatePrompt(config.prompt)
+
+							// Generate the prompt
+							const processedPrompt = await generatePrompt(config)
+
+							this.transformerManager.validateTransformerConfig(config)
+
+							const tokenCount = countTokens(processedPrompt)
+
+							let data = {
+								isSuccess: true,
+								message: "Configuration is valid",
+								tokenCount: tokenCount,
+							}
+
+							this.sendCommandToWebView({
+								type: "validationResult",
+								data: JSON.stringify(data),
+							})
+						} catch (error) {
+							let data = {
+								isSuccess: false,
+								message: error instanceof Error ? error.message : "Validation failed",
+							}
+							this.sendCommandToWebView({
+								type: "validationResult",
+								data: JSON.stringify(data),
+							})
+
+							if (error instanceof Error) {
+								logOutputChannel.error(`Error validating config: ${error.message}`)
+								vscode.window.showErrorMessage(`Validation failed: ${error.message}`)
+							} else {
+								logOutputChannel.error(`Unknown error validating config: ${JSON.stringify(error)}`)
+								vscode.window.showErrorMessage("Validation failed due to an unknown error")
+							}
+						}
+						break
+
 					case "previewLLMRequest":
 						try {
 							const config = message.config as TransformerConfig
 
 							// validate prompt
-							this.transformerManager.validatePrompt(config.prompt)
+							validatePrompt(config.prompt)
 
-							const placeholderRegex = /\{\{([^}]+)\}\}/g
-							const placeholders = new Set<{ name: string; type: string; options: string | undefined }>()
-							let match
-							let processedPrompt = config.prompt
-							while ((match = placeholderRegex.exec(config.prompt))) {
-								const [inputName, inputType, inputOptions] = match[1].split("::")
-								logOutputChannel.debug(
-									`Found placeholder: ${match[1]} of type ${inputType} with name ${inputName} and options ${inputOptions}`,
-								)
-								placeholders.add({ name: inputName, type: inputType, options: inputOptions })
+							// Generate the prompt
+							const processedPrompt = await generatePrompt(config)
 
-								const input = config.input.find((i) => i.name === inputName)
-								if (!input) {
-									throw new Error(`Input ${inputName} not found in config`)
-								}
-
-								const inputValue = input.value
-								if (inputValue === undefined || inputValue === null) {
-								} else {
-									switch (inputType) {
-										case "text":
-										case "textArea":
-										case "string":
-										case "select":
-											processedPrompt = processedPrompt.replace("{{" + match[1] + "}}", inputValue)
-											break
-										case "file":
-											const fileContent = await readFileContents(inputValue)
-											// Replace placeholders in the prompt
-											processedPrompt = processedPrompt.replace("{{" + match[1] + "}}", fileContent)
-											break
-										case "folder":
-											if (config.processFormat === "joinFiles") {
-												const absolutePath = getAbsolutePath(inputValue)
-												if (!absolutePath || absolutePath === null) {
-													throw new Error("Invalid folder path")
-												}
-												const files = fs.readdirSync(absolutePath)
-												let joinedContent = ""
-												for (const file of files) {
-													const filePath = path.join(absolutePath, file)
-													const fileStat = fs.lstatSync(filePath)
-													if (fileStat.isFile() && !file.startsWith(".")) {
-														const fileContent = await readFileContents(filePath)
-														joinedContent += `FileName: ${file}\n${fileContent}\n\n`
-													}
-												}
-												processedPrompt = processedPrompt.replace("{{" + match[1] + "}}", joinedContent)
-											}
-											break
-									}
-								}
-							}
 							// Create a temporary file to show the preview
 							await fs.promises.mkdir(this.context.globalStorageUri.fsPath, { recursive: true })
 							const tempFile = path.join(this.context.globalStorageUri.fsPath, "preview_llm_request.txt")
