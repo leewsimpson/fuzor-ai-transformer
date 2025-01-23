@@ -5,6 +5,7 @@ import { ExtensionCommand, WebViewCommand } from "../shared/commands"
 import { logOutputChannel } from "../extension"
 import { TransformerManager } from "../transformers/transformerManager"
 import { TransformersProvider } from "../providers/TransformersProvider"
+import { normalizeGitUrl } from "../utils/gitUtils"
 
 export async function authenticateGitHub(): Promise<vscode.AuthenticationSession | null> {
 	try {
@@ -30,7 +31,8 @@ export async function fetchFileContent(repo: string, path: string, token: string
 			return ""
 		}
 
-		const url = `https://api.github.com/repos/${repo}/contents/${path}`
+		const normalizedRepo = normalizeGitUrl(repo)
+		const url = `https://api.github.com/repos/${normalizedRepo.fullName}/contents/${path}`
 		const headers = { Authorization: `Bearer ${token}` }
 
 		const response = await axios.get(url, { headers })

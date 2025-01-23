@@ -29,3 +29,10 @@ export class TransformerValidationError extends TransformerError {
 		this.name = "TransformerValidationError"
 	}
 }
+
+export class InvalidRepositoryUrlError extends Error {
+    constructor(message: string) {
+        super(message)
+        this.name = 'InvalidRepositoryUrlError'
+    }
+}

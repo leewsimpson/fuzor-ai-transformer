@@ -1,13 +1,20 @@
 General:
 Review the solution architecture in design.md
-"compilerOptions": "module": "Node16", "target": "ES2022"...
-This is typescript, so only reference other ts files, no referencing .js
 do not execute 'npx tsc' directly - use 'npm run compile' if needed
 Australian English please
 
+Module System:
+"compilerOptions": "module": "Node16", "target": "ES2022"...
+This is typescript, so only reference other ts files, no referencing .js
+- MUST use CommonJS modules ('require' syntax)
+- NEVER modify tsconfig.json module/moduleResolution settings
+- NEVER add 'type': 'module' to package.json
+- ALWAYS use file extensions in imports (.ts for source files)
+- NEVER convert existing code to ES modules
+
 Testing:
 Do NOT use Jest!
-Stick to Chai and Mocha. 
+Stick to Chai and Mocha.
 Follow the conventions of exsisting test files.
 Tests should focus on high level behavior. Keep tests simple.
 Vscode module needs to be properly mocked using the mock implementations from src/test/mocks/vscode.ts
