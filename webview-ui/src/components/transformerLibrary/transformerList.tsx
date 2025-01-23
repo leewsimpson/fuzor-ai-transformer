@@ -34,7 +34,8 @@ const TransformerList: React.FC<{ transformers: TransformerLibrary }> = ({ trans
 					{transformerConfigs.map((transformer: TransformerConfig) => (
 						<div
 							key={transformer.id}
-							className="flex flex-col h-full p-4 transition-shadow bg-white rounded-lg shadow-sm dark:bg-gray-800 hover:shadow-md">
+							className="flex flex-col h-full p-4 transition-shadow rounded-lg shadow-sm hover:shadow-md"
+							style={{ backgroundColor: 'var(--vscode-sideBar-background)' }}>
 							<div className="flex items-center gap-2 mb-4">
 								<span className="text-[var(--vscode-foreground)] codicon codicon-symbol-event"></span>
 								<h3 className="font-semibold text-[var(--vscode-foreground)]">{transformer.name}</h3>

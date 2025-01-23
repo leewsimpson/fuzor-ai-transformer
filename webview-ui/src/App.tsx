@@ -48,7 +48,10 @@ function App() {
 	}, [])
 
 	return (
-		<div className="p-2">
+		<div className="p-2" style={{
+			backgroundColor: 'var(--vscode-editor-background)',
+			color: 'var(--vscode-editor-foreground)'
+		}}>
 			{transformerLibrary ? <TransformerLibraryView library={transformerLibrary} /> : <ManageTransformerView />}
 		</div>
 	)
