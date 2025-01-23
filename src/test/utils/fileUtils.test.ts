@@ -2,6 +2,9 @@ import { strict as assert } from "assert"
 import * as sinon from "sinon"
 import * as vscode from "vscode"
 import { isValidFilePath, isValidFolderPath, getAbsolutePath, readFileContents } from "../../utils/fileUtils"
+import * as path from "path"
+
+const testFilePath = path.join(__dirname, "files", "test.docx") // Finds the absolute directory of the 'out' folder.
 
 suite("FileUtils Test Suite", () => {
 	let sandbox: sinon.SinonSandbox
@@ -93,5 +96,24 @@ suite("FileUtils Test Suite", () => {
 
 		const content = await readFileContents("/valid/file.txt")
 		assert.equal(content, expectedContent)
+	})
+
+	test("should extract text from a valid .docx file", async () => {
+		const expectedContent = "This is a test file.\n\n"
+
+		const content = await readFileContents(testFilePath.replace("out", "src"))
+		assert.equal(content, expectedContent)
+	})
+
+	test("should handle non-existent .docx file gracefully", async () => {
+		const fakePath = "/fake/path/nonexistent.docx"
+		sandbox.stub(require("fs"), "existsSync").returns(false)
+
+		try {
+			await readFileContents(fakePath)
+			assert.fail("Should have thrown an error for non-existent file")
+		} catch (error) {
+			assert.equal(error.message, `File ${fakePath} does not exist`)
+		}
 	})
 })

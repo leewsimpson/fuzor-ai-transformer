@@ -1,6 +1,7 @@
 import * as path from "path"
 import * as vscode from "vscode"
 import * as fs from "fs"
+import * as mammoth from "mammoth"
 
 export function isValidFilePath(filePath: string): boolean {
 	try {
@@ -66,6 +67,11 @@ export async function readFileContents(filePath: string): Promise<string> {
 	}
 
 	// Read the input file content
-	const fileContent = fs.readFileSync(absolutePath, "utf8")
-	return fileContent
+	const fileExtension = path.extname(filePath).toLowerCase()
+	if (fileExtension === ".docx") {
+		const result = await mammoth.extractRawText({ path: absolutePath })
+		return result.value
+	}
+	// Read the input file content for other file types
+	return fs.readFileSync(absolutePath, "utf8")
 }
